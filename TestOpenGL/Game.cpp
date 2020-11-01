@@ -117,39 +117,58 @@ void Game::initModels()
 {
 	std::vector<Mesh*>meshes;
 
-	meshes.push_back(new Mesh(&Cube(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+	int width = 5;
+	int height = 2;
+	int horDist = 1;
+	int verDist = 1;
+
+
+	meshes.push_back(new Mesh(&Brick(width,height), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 	
 	
 	/*this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));*/
 
+	for (size_t y = 0; y < 5; y++)
+		for (size_t x = 0; x < 5; x++)
+		{
+			this->models.push_back(new Model(
+				glm::vec3(x * (width + horDist), y * (height + verDist), -1.0f),
+				this->materials[0],
+				this->textures[TEX_CONTAINER],
+				this->textures[TEX_CONTAINER_SPECULAR],
+				meshes
+			)
+			);
+		}
 
-	//cube 1
-	this->models.push_back(new Model(
-		glm::vec3(0.0f, 0.0f, -1.0f),	
-		this->materials[0],
-		this->textures[TEX_CONTAINER],
-		this->textures[TEX_CONTAINER_SPECULAR],
-		meshes
-		)
-	);	
 
-	this->models.push_back(new Model(
-		glm::vec3(0.0f, 2.0f, -1.0f),
-		this->materials[0],
-		this->textures[0],
-		this->textures[1],
-		meshes
-	)
-	);
+	////cube 1
+	//this->models.push_back(new Model(
+	//	glm::vec3(0.0f, 0.0f, -1.0f),	
+	//	this->materials[0],
+	//	this->textures[TEX_CONTAINER],
+	//	this->textures[TEX_CONTAINER_SPECULAR],
+	//	meshes
+	//	)
+	//);	
 
-	this->models.push_back(new Model(
-		glm::vec3(4.0f, 2.0f, 4.0f),
-		this->materials[0],
-		this->textures[0],
-		this->textures[1],
-		"OBJFiles/monkey.obj"
-	)
-	);
+	//this->models.push_back(new Model(
+	//	glm::vec3(0.0f, 2.0f, -1.0f),
+	//	this->materials[0],
+	//	this->textures[0],
+	//	this->textures[1],
+	//	meshes
+	//)
+	//);
+
+	//this->models.push_back(new Model(
+	//	glm::vec3(4.0f, 2.0f, 4.0f),
+	//	this->materials[0],
+	//	this->textures[0],
+	//	this->textures[1],
+	//	"OBJFiles/monkey.obj"
+	//)
+	//);
 
 	/*this->models.push_back(new Model(
 		glm::vec3(2.0f, 0.0f, 2.0f),
@@ -231,7 +250,7 @@ Game::Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, c
 	this->initGLEW();
 	this->initOpenGLOptions();
 
-	this->initMatrices(false); //false for ortho camera
+	this->initMatrices(); //false for ortho camera
 	this->initShaders();
 	this->initTextures();
 	this->initMaterials();
