@@ -1,5 +1,2 @@
-﻿  GameObject.cpp
-  main.cpp
-  Generating Code...
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  TestOpenGL.vcxproj -> C:\Users\prana\source\repos\TestOpenGL\Debug\TestOpenGL.exe
+﻿  Game.cpp
+  TestOpenGL.vcxproj -> D:\School\UOIT\Computer-Graphics-Midterm\Debug\TestOpenGL.exe

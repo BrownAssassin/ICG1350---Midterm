@@ -67,6 +67,8 @@ void Game::initOpenGLOptions()
 
 void Game::initMatrices(bool isPerspective)
 {
+
+
 	this->ViewMatrix = glm::mat4(1.0f);
 	this->ViewMatrix = glm::lookAt(this->camPosition, this->camPosition + this->camFront, this->worldUp);
 
@@ -229,7 +231,7 @@ Game::Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, c
 	this->initGLEW();
 	this->initOpenGLOptions();
 
-	this->initMatrices(); //false for ortho camera
+	this->initMatrices(false); //false for ortho camera
 	this->initShaders();
 	this->initTextures();
 	this->initMaterials();
