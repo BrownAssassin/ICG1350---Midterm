@@ -53,7 +53,7 @@ private:
 	float fov;
 	float nearPlane;
 	float farPlane;
-
+	 
 	//Shaders
 	std::vector<Shader*> shaders;
 
@@ -65,6 +65,9 @@ private:
 
 	//Models
 	std::vector<Model*> models;
+
+	//Bricks
+	std::vector<Brick*> bricks;
 
 	//Lights
 	std::vector<glm::vec3*> lights;
@@ -80,6 +83,7 @@ private:
 	void initTextures();
 	void initMaterials();
 	void initOBJModels();
+	void initBricks(int rows, int cols, int width, int height, int horDist, int verDist);
 	void initModels();
 	void initLights();
 	void initUniforms();
@@ -105,6 +109,7 @@ public:
 	void updateKeyboardInput();
 	void updateGamepadInput();
 	void updateInput();
+	void updateModels();
 	void update();
 	void render();
 

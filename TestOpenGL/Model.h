@@ -12,27 +12,49 @@ private:
 	Material* material;
 	Texture* overrideTextureDiffuse;
 	Texture* overrideTextureSpecular;
-	std::vector<Mesh*> meshes;
+	
 
 	glm::vec3 position;
+	int idModel;
 
 	void updateUniforms()
 	{
 
 	}
 
+
 public:
-	Model(glm::vec3 position, Material* material, Texture* overrideTextureDiffuse, Texture* overrideTextureSpecular, std::vector<Mesh*> meshes)
+	std::vector<Mesh*> meshes;
+	
+	 
+
+	Model(glm::vec3 position, Material* material, Texture* overrideTextureDiffuse, Texture* overrideTextureSpecular, Mesh* mesh)
 	{
 		this->position = position;
 		this->material = material;
 		this->overrideTextureDiffuse = overrideTextureDiffuse;
 		this->overrideTextureSpecular = overrideTextureSpecular;
 
-		for (auto* i : meshes)
+		this->meshes.push_back(new Mesh(*mesh));
+
+
+		for (auto& i : this->meshes)
 		{
-			this->meshes.push_back(new Mesh(*i));
+			i->move(this->position);
+			i->setOrigin(this->position);
 		}
+	}
+
+	Model(glm::vec3 position, Material* material, Texture* overrideTextureDiffuse, Texture* overrideTextureSpecular, Mesh* mesh, int id)
+	{
+		this->position = position;
+		this->material = material;
+		this->overrideTextureDiffuse = overrideTextureDiffuse;
+		this->overrideTextureSpecular = overrideTextureSpecular;
+		this->idModel = id;
+
+		this->meshes.push_back(new Mesh(*mesh));
+
 
 		for (auto& i : this->meshes)
 		{
@@ -78,6 +100,13 @@ public:
 	void update()
 	{
 
+	}
+
+	void setTexture(Texture* texture)
+	{
+		this->overrideTextureDiffuse->unbind();
+		this->overrideTextureDiffuse = texture;
+		this->overrideTextureDiffuse->bind(0);	
 	}
 
 	void render(Shader* shader)

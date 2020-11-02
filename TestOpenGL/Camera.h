@@ -73,6 +73,11 @@ public:
 		return this->ViewMatrix;
 	}
 
+	void setPosition(glm::vec3 position) 
+	{
+		this->position = position;
+	}
+
 	const glm::vec3 getPosition() const
 	{
 		return this->position;

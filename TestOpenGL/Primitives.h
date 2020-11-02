@@ -66,15 +66,15 @@ public:
 	}
 };
 
-class Brick : public Primitive
+class Quad : public Primitive
 {
 public:
-	Brick(float width, float height)
+	Quad(float width, float height)
 		: Primitive()
 	{
 		Vertex vertices[] =
 		{
-			//Position                            //Color                                //Texcoord                    //Normals
+			//Position										//Color                             //Texcoord                    //Normals
 			glm::vec3(-width / 2, height / 2, 0.0f),        glm::vec3(1.0f, 0.0f, 0.0f),        glm::vec2(0.0f, 1.0f),        glm::vec3(0.0f, 0.0f, 1.0f),
 			glm::vec3(-width / 2, -height / 2, 0.0f),        glm::vec3(0.0f, 1.0f, 0.0f),        glm::vec2(0.0f, 0.0f),        glm::vec3(0.0f, 0.0f, 1.0f),
 			glm::vec3(width / 2, -height / 2, 0.0f),        glm::vec3(0.0f, 0.0f, 1.0f),        glm::vec2(1.0f, 0.0f),        glm::vec3(0.0f, 0.0f, 1.0f),
@@ -94,35 +94,6 @@ public:
 	}
 
 	float width = 1, height = 1;
-};
-
-
-class Quad : public Primitive
-{
-public:
-	Quad()
-		: Primitive()
-	{
-		Vertex vertices[] =
-		{
-			//Position							//Color								//Texcoord					//Normals
-			glm::vec3(-0.5f, 0.5f, 0.0f),		glm::vec3(1.0f, 0.0f, 0.0f),		glm::vec2(0.0f, 1.0f),		glm::vec3(0.0f, 0.0f, 1.0f),
-			glm::vec3(-0.5f, -0.5f, 0.0f),		glm::vec3(0.0f, 1.0f, 0.0f),		glm::vec2(0.0f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),
-			glm::vec3(0.5f, -0.5f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),		glm::vec2(1.0f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),
-			glm::vec3(0.5f, 0.5f, 0.0f),		glm::vec3(1.0f, 1.0f, 0.0f),		glm::vec2(1.0f, 1.0f),		glm::vec3(0.0f, 0.0f, 1.0f)
-
-		};
-		unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
-
-		GLuint indices[] =
-		{
-			0, 1, 2, //Tringle1
-			0, 2, 3	 //Triangle2
-		};
-		unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
-
-		this->set(vertices, nrOfVertices, indices, nrOfIndices);
-	}
 };
 
 class Pyramid : public Primitive

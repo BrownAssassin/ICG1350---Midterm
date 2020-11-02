@@ -62,7 +62,7 @@ void Game::initOpenGLOptions()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // change if you want to draw only outline GL_LINE
 
 	//Input
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Game::initMatrices(bool isPerspective)
@@ -96,11 +96,14 @@ void Game::initTextures()
 {
 	//Texture0
 	this->textures.push_back(new Texture("Images/bic.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Images/bic_specular.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Images/bic.png", GL_TEXTURE_2D));
 
 	//Texture1
 	this->textures.push_back(new Texture("Images/container.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Images/container_specular.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Images/container.png", GL_TEXTURE_2D));
+
+	this->textures.push_back(new Texture("Images/background.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Images/background.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
@@ -113,44 +116,86 @@ void Game::initOBJModels()
 
 }
 
+void Game::initBricks(int rows, int cols, int width, int height, int horDist, int verDist)
+{
+	int idCounter = 0;
+	for (size_t y = 0; y < rows; y++)
+		for (size_t x = 0; x < cols; x++)
+		{
+			if (y <= 2)
+			{
+				this->bricks.push_back(new Brick(
+					glm::vec3(x * (width + horDist), y * (height + verDist), -1.0f),
+					width,
+					height,
+					this->materials[0],
+					this->textures[TEX_BLAZARK],
+					TWO_HIT_BRICK)
+				);
+
+				this->bricks[idCounter]->brick_id = idCounter;
+			}
+			if (y > 2)
+			{
+				this->bricks.push_back(new Brick(
+					glm::vec3(x * (width + horDist), y * (height + verDist), -1.0f),
+					width,
+					height,
+					this->materials[0],
+					this->textures[TEX_CONTAINER],
+					ONE_HIT_BRICK)
+				);
+
+				this->bricks[idCounter]->brick_id = idCounter;
+			}
+			idCounter++;
+		}
+}
+
 void Game::initModels()
 {
 	std::vector<Mesh*>meshes;
 
-	int width = 5;
-	int height = 2;
-	int horDist = 1;
-	int verDist = 1;
+	
+	int width = this->bricks[0]->width;
+	int height = this->bricks[0]->height;
+
+	
+	meshes.push_back(new Mesh(&Quad(width,height), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+	
+	meshes.push_back(new Mesh(&Quad(38, 38), glm::vec3(12.f, 0.f, 0.0f), glm::vec3(12.f, 2.f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+
+	//bricks to models
+	for(int i = 0; i < bricks.size(); i++)
+	{
+		//cube 1
+		this->models.push_back(new Model(
+			bricks[i]->position,
+			bricks[i]->material,
+			bricks[i]->texture,
+			&bricks[i]->texture[TEX_CONTAINER_SPECULAR],
+			meshes[0],
+			bricks[i]->brick_id)
+		);
+	}
+		
 
 
-	meshes.push_back(new Mesh(&Brick(width,height), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-	
-	
 	/*this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));*/
 
-	for (size_t y = 0; y < 5; y++)
-		for (size_t x = 0; x < 5; x++)
-		{
-			this->models.push_back(new Model(
-				glm::vec3(x * (width + horDist), y * (height + verDist), -1.0f),
-				this->materials[0],
-				this->textures[TEX_CONTAINER],
-				this->textures[TEX_CONTAINER_SPECULAR],
-				meshes
-			)
-			);
-		}
+	
 
 
-	////cube 1
-	//this->models.push_back(new Model(
-	//	glm::vec3(0.0f, 0.0f, -1.0f),	
-	//	this->materials[0],
-	//	this->textures[TEX_CONTAINER],
-	//	this->textures[TEX_CONTAINER_SPECULAR],
-	//	meshes
-	//	)
-	//);	
+	////Background
+	this->models.push_back(new Model(
+		glm::vec3(0.0f, 0.0f, -1.0f),	
+		this->materials[0],
+		this->textures[4],
+		this->textures[4],
+		meshes[1],
+		0
+		)
+	);	
 
 	//this->models.push_back(new Model(
 	//	glm::vec3(0.0f, 2.0f, -1.0f),
@@ -182,10 +227,10 @@ void Game::initModels()
 	for (auto*& i : meshes)
 		delete i;
 }
-
+  
 void Game::initLights()
 {
-	this->lights.push_back(new glm::vec3(0.0f, 0.0f, 1.0f));
+	this->lights.push_back(new glm::vec3(12.0f, 3.0f, 1.0f));
 }
 
 void Game::initUniforms()
@@ -211,7 +256,9 @@ void Game::updateUniforms()
 	if(this->isPerspective)
 		this->ProjectionMatrix = glm::perspective(glm::radians(this->fov), static_cast<float>(this->framebufferWidth) / this->framebufferHeight, this->nearPlane, this->farPlane);
 	else
-		this->ProjectionMatrix = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, this->nearPlane, this->farPlane);
+		this->ProjectionMatrix = glm::ortho(-17.0f, 17.0f, -17.0f, 17.0f, this->nearPlane, this->farPlane);
+	
+	this->camera.setPosition(glm::vec3(12.0f, 0.f, 0.f));
 
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->ProjectionMatrix, "ProjectionMatrix");
 }
@@ -250,10 +297,11 @@ Game::Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, c
 	this->initGLEW();
 	this->initOpenGLOptions();
 
-	this->initMatrices(); //false for ortho camera
+	this->initMatrices(false); //false for ortho camera
 	this->initShaders();
 	this->initTextures();
 	this->initMaterials();
+	this->initBricks(5, 5, 5, 2, 1, 1);
 	this->initOBJModels();
 	this->initModels();
 	this->initLights();
@@ -358,6 +406,21 @@ void Game::updateKeyboardInput()
 	{
 		this->camPosition.y += 0.05f;
 	}
+
+	if (glfwGetKey(this->window, GLFW_KEY_B) == GLFW_PRESS)
+	{
+		
+
+		/*Texture* textureTemp = new Texture("Images/container.png", GL_TEXTURE_2D);
+		this->bricks[0]->texture = textureTemp;
+		this->models[0]->setTexture(this->bricks[0]->texture);*/
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_N) == GLFW_PRESS)
+	{
+		Texture* textureTemp = new Texture("Images/bic.png", GL_TEXTURE_2D);
+		this->bricks[0]->texture = textureTemp;
+		models[0]->setTexture(this->bricks[0]->texture);
+	}
 }
 
 void Game::updateGamepadInput()
@@ -419,7 +482,32 @@ void Game::updateInput()
 	this->updateKeyboardInput();
 	this->updateMouseInput();
 	this->updateGamepadInput();
-	this->camera.updateInput(dt, -1, this->mouseOffsetX, this->mouseOffsetY);
+	//this->camera.updateInput(dt, -1, this->mouseOffsetX, this->mouseOffsetY);
+}
+
+void Game::updateModels()
+{
+	//std::vector<Mesh*>meshes;
+
+
+	//int width = this->bricks[0]->width;
+	//int height = this->bricks[0]->height;
+
+
+	//meshes.push_back(new Mesh(&Quad(width, height), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+
+	//for (int i = 0; i < bricks.size(); i++)
+	//{
+	//	//cube 1
+	//	this->models.push_back(new Model(
+	//		bricks[i]->position,
+	//		bricks[i]->material,
+	//		bricks[i]->texture,
+	//		&bricks[i]->texture[TEX_CONTAINER_SPECULAR],
+	//		meshes,
+	//		bricks[i]->brick_id)
+	//	);
+	//}
 }
 
 void Game::update()
@@ -427,6 +515,7 @@ void Game::update()
 	//UPDATE INPUT ---
 	this->updateDt();
 	this->updateInput();
+	
 
 	//this->models[0]->rotate(glm::vec3(0.0f, 2.0f, 0.0f));
 	//this->models[1]->rotate(glm::vec3(0.0f, 1.0f, 0.0f));
@@ -449,8 +538,11 @@ void Game::render()
 	this->updateUniforms();
 
 	//Render models
-	for(auto& i : this->models)
+
+	for (auto& i : this->models)
+	{	
 		i->render(this->shaders[SHADER_CORE_PROGRAM]);
+	}
 
 	//END DRAW
 	glfwSwapBuffers(window);
