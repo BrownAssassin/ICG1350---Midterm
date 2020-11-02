@@ -94,16 +94,36 @@ void Game::initInstancingShaders()
 
 void Game::initTextures()
 {
-	//Texture0
-	this->textures.push_back(new Texture("Images/bic.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Images/bic.png", GL_TEXTURE_2D));
+	//oneHit brick
+	this->textures.push_back(new Texture("Images/oneHit.png", GL_TEXTURE_2D)); //0
+	this->textures.push_back(new Texture("Images/oneHit.png", GL_TEXTURE_2D)); //1
 
-	//Texture1
-	this->textures.push_back(new Texture("Images/container.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Images/container.png", GL_TEXTURE_2D));
+	//twoHit brick
+	this->textures.push_back(new Texture("Images/twoHit.png", GL_TEXTURE_2D)); //2
+	this->textures.push_back(new Texture("Images/twoHit.png", GL_TEXTURE_2D)); //3
 
-	this->textures.push_back(new Texture("Images/background.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Images/background.png", GL_TEXTURE_2D));
+	//Background
+	this->textures.push_back(new Texture("Images/background.png", GL_TEXTURE_2D)); //4
+	this->textures.push_back(new Texture("Images/background.png", GL_TEXTURE_2D)); //5
+
+	//Paddle
+	this->textures.push_back(new Texture("Images/paddle.png", GL_TEXTURE_2D)); //6
+	this->textures.push_back(new Texture("Images/paddle.png", GL_TEXTURE_2D)); //7
+
+	//score
+	this->textures.push_back(new Texture("Images/Numbers/0.png", GL_TEXTURE_2D)); //8
+	this->textures.push_back(new Texture("Images/Numbers/1.png", GL_TEXTURE_2D)); //9
+	this->textures.push_back(new Texture("Images/Numbers/2.png", GL_TEXTURE_2D)); //10
+	this->textures.push_back(new Texture("Images/Numbers/3.png", GL_TEXTURE_2D)); //11
+	this->textures.push_back(new Texture("Images/Numbers/4.png", GL_TEXTURE_2D)); //12
+	this->textures.push_back(new Texture("Images/Numbers/5.png", GL_TEXTURE_2D)); //13
+	this->textures.push_back(new Texture("Images/Numbers/6.png", GL_TEXTURE_2D)); //14
+	this->textures.push_back(new Texture("Images/Numbers/7.png", GL_TEXTURE_2D)); //15
+	this->textures.push_back(new Texture("Images/Numbers/8.png", GL_TEXTURE_2D)); //16
+	this->textures.push_back(new Texture("Images/Numbers/9.png", GL_TEXTURE_2D)); //17
+
+	//Ball
+	this->textures.push_back(new Texture("Images/ball.png", GL_TEXTURE_2D)); //18
 }
 
 void Game::initMaterials()
@@ -116,7 +136,7 @@ void Game::initOBJModels()
 
 }
 
-void Game::initBricks(int rows, int cols, int width, int height, int horDist, int verDist)
+void Game::initBricks(float rows, float cols, float width, float height, float horDist, float verDist)
 {
 	int idCounter = 0;
 	for (size_t y = 0; y < rows; y++)
@@ -160,10 +180,20 @@ void Game::initModels()
 	int width = this->bricks[0]->width;
 	int height = this->bricks[0]->height;
 
-	
+	//Bricks - 0
 	meshes.push_back(new Mesh(&Quad(width,height), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 	
-	meshes.push_back(new Mesh(&Quad(38, 38), glm::vec3(12.f, 0.f, 0.0f), glm::vec3(12.f, 2.f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+	//Background - 1
+	meshes.push_back(new Mesh(&Quad(34, 34), glm::vec3(12.f, 0.f, -1.0f), glm::vec3(12.f, 2.f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+
+	//Paddle - 2
+	meshes.push_back(new Mesh(&Quad(5, 2), glm::vec3(8.58f, -15.f, 0.0f), glm::vec3(8.58f, -15.f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+
+	//Score - 3
+	meshes.push_back(new Mesh(&Quad(1, 3), glm::vec3(25.f, 9.f, 0.0f), glm::vec3(25.f, 9.f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+
+	//Ball - 4
+	meshes.push_back(new Mesh(&Quad(0.75, 1.5), glm::vec3(8.5f, -10.f, 0.0f), glm::vec3(8.5f, -10.f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
 	//bricks to models
 	for(int i = 0; i < bricks.size(); i++)
@@ -179,12 +209,7 @@ void Game::initModels()
 		);
 	}
 		
-
-
 	/*this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));*/
-
-	
-
 
 	////Background
 	this->models.push_back(new Model(
@@ -193,9 +218,38 @@ void Game::initModels()
 		this->textures[4],
 		this->textures[4],
 		meshes[1],
-		0
-		)
+		1000)
 	);	
+
+	////Paddle
+	this->models.push_back(new Model(
+		glm::vec3(0.0f, 0.0f, -1.0f),
+		this->materials[0],
+		this->textures[6],
+		this->textures[6],
+		meshes[2],
+		2000)
+	);
+
+	////Score
+	this->models.push_back(new Model(
+		glm::vec3(0.0f, 0.0f, -1.0f),
+		this->materials[0],
+		this->textures[8],
+		this->textures[8],
+		meshes[3],
+		2000)
+	);
+
+	////Ball
+	this->models.push_back(new Model(
+		glm::vec3(0.0f, 0.0f, -1.0f),
+		this->materials[0],
+		this->textures[18],
+		this->textures[18],
+		meshes[4],
+		3000)
+	);
 
 	//this->models.push_back(new Model(
 	//	glm::vec3(0.0f, 2.0f, -1.0f),
@@ -301,7 +355,7 @@ Game::Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, c
 	this->initShaders();
 	this->initTextures();
 	this->initMaterials();
-	this->initBricks(5, 5, 5, 2, 1, 1);
+	this->initBricks(5, 6, 3, 2, 0.5, 0.5);
 	this->initOBJModels();
 	this->initModels();
 	this->initLights();
@@ -384,20 +438,30 @@ void Game::updateKeyboardInput()
 	//Camera
 	if (glfwGetKey(this->window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		this->camera.move(this->dt, FORWARD);
+		//this->models[33]->move(glm::vec3(0.0f, 0.05f, 0.0f));
+		//this->camera.move(this->dt, FORWARD);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		this->camera.move(this->dt, BACKWARD);
+		//this->models[33]->move(glm::vec3(0.0f, -0.05f, 0.0f));
+		//this->camera.move(this->dt, BACKWARD);
 	}
-	if (glfwGetKey(this->window, GLFW_KEY_A) == GLFW_PRESS)
+
+	//Paddle Movement
+	if (glfwGetKey(this->window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
-		this->camera.move(this->dt, LEFT);
+		if(this->models[31]->meshes[0]->getPosition().x >= 0.63)
+			this->models[31]->move(glm::vec3(-0.05f, 0.0f, 0.0f));
+		//this->camera.move(this->dt, LEFT);
 	}
-	if (glfwGetKey(this->window, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey(this->window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
-		this->camera.move(this->dt, RIGHT);
+		if (this->models[31]->meshes[0]->getPosition().x <= 17.03)
+			this->models[31]->move(glm::vec3(0.05f, 0.0f, 0.0f));
+		//this->camera.move(this->dt, RIGHT);
 	}
+
+
 	if (glfwGetKey(this->window, GLFW_KEY_C) == GLFW_PRESS)
 	{
 		this->camPosition.y -= 0.05f;
@@ -421,6 +485,9 @@ void Game::updateKeyboardInput()
 		this->bricks[0]->texture = textureTemp;
 		models[0]->setTexture(this->bricks[0]->texture);
 	}
+	std::cout << "X: " << this->models[31]->meshes[0]->getPosition().x << std::endl;
+	std::cout << "Y: " << this->models[33]->meshes[0]->getPosition().y << std::endl;
+	
 }
 
 void Game::updateGamepadInput()
@@ -487,6 +554,42 @@ void Game::updateInput()
 
 void Game::updateModels()
 {
+	//33 is ball
+	//Right wall check
+	if (this->models[33]->meshes[0]->getPosition().x > 19.2)
+	{
+		changeDirX = -1;
+	}
+		
+	//Left wall check
+	if (this->models[33]->meshes[0]->getPosition().x < -1.5)
+	{
+		changeDirX = 1;
+	}
+		
+
+	//Ceiling check
+	if (this->models[33]->meshes[0]->getPosition().y > 14.1)
+	{
+		changeDirY = -1;
+	}
+		
+	//Bottom
+	if (this->models[33]->meshes[0]->getPosition().y < -13.2)
+	{
+		if(this->models[33]->meshes[0]->getPosition().x > this->models[31]->meshes[0]->getPosition().x)
+			changeDirX = 1;
+		if (this->models[33]->meshes[0]->getPosition().x < this->models[31]->meshes[0]->getPosition().x)
+			changeDirX = -1;
+
+		if(this->models[33]->meshes[0]->getPosition().x > this->models[31]->meshes[0]->getPosition().x - 2.725 && this->models[33]->meshes[0]->getPosition().x < this->models[31]->meshes[0]->getPosition().x + 2.725)
+			changeDirY = 1;
+	}
+		
+
+
+	this->models[33]->move(glm::vec3(0.05f * changeDirX, 0.05f * changeDirY, 0.0f));
+
 	//std::vector<Mesh*>meshes;
 
 
@@ -515,7 +618,7 @@ void Game::update()
 	//UPDATE INPUT ---
 	this->updateDt();
 	this->updateInput();
-	
+	this->updateModels();
 
 	//this->models[0]->rotate(glm::vec3(0.0f, 2.0f, 0.0f));
 	//this->models[1]->rotate(glm::vec3(0.0f, 1.0f, 0.0f));

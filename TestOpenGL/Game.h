@@ -53,6 +53,10 @@ private:
 	float fov;
 	float nearPlane;
 	float farPlane;
+
+	int changeDirX = 1;
+	int changeDirY = 1;
+
 	 
 	//Shaders
 	std::vector<Shader*> shaders;
@@ -83,7 +87,7 @@ private:
 	void initTextures();
 	void initMaterials();
 	void initOBJModels();
-	void initBricks(int rows, int cols, int width, int height, int horDist, int verDist);
+	void initBricks(float rows, float cols, float width, float height, float horDist, float verDist);
 	void initModels();
 	void initLights();
 	void initUniforms();

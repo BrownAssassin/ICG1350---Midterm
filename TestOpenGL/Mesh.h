@@ -189,6 +189,10 @@ public:
 
 
 	//Accessors
+	glm::vec3 getPosition()
+	{
+		return this->position;
+	}
 
 	//Modifiers
 	void setPosition(const glm::vec3 position)

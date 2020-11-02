@@ -97,6 +97,12 @@ public:
 			i->rotate(rotation);
 	}
 
+	void move(const glm::vec3 move)
+	{
+		for (auto& i : this->meshes)
+			i->move(move);
+	}
+
 	void update()
 	{
 

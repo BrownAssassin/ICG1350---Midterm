@@ -2,7 +2,7 @@
 
 int main()
 {
-	Game game("TestOpenGL", 800, 600, 4, 4, false);
+	Game game("TestOpenGL", 1366, 768, 4, 4, false);
  
 	//MAIN LOOP
 	while (!game.getWindowShouldClose())
