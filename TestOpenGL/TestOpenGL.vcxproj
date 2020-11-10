@@ -146,15 +146,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Level.h" />
     <ClInclude Include="libs.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
@@ -168,8 +167,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment_shader.glsl" />
-    <None Include="instancing_fragment_shader.glsl" />
-    <None Include="instancing_vertex_shader.glsl" />
+    <None Include="skybox_fragment_shader.glsl" />
+    <None Include="skybox_vertex_shader.glsl" />
     <None Include="vertex_shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

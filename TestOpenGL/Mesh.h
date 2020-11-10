@@ -22,12 +22,60 @@ private:
 	GLuint VBO;
 	GLuint EBO;
 
+	GLuint skyboxVAO;
+	GLuint skyboxVBO;
+
 	glm::vec3 position;
 	glm::vec3 origin;
 	glm::vec3 rotation;
 	glm::vec3 scale;
 
 	glm::mat4 ModelMatrix;
+
+	GLfloat skyboxVertices[108] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
 
 
 	void initVAO()
@@ -65,6 +113,20 @@ private:
 
 		//BIND VAO 0
 		glBindVertexArray(0);
+	}
+
+	void initSkyboxVAO()
+	{
+		glGenVertexArrays(1, &this->skyboxVAO);
+		glGenBuffers(1, &this->skyboxVBO);
+
+		glBindVertexArray(this->skyboxVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, this->skyboxVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+
 	}
 
 	void updateUniforms(Shader* shader)
@@ -172,10 +234,11 @@ public:
 		}
 
 		this->initVAO();
+		//this->initSkyboxVAO();
 		this->updateModelMatrix();
 	}
 
-	~Mesh() 
+	~Mesh()
 	{
 		glDeleteVertexArrays(1, &this->VAO);
 		glDeleteBuffers(1, &this->VBO);
@@ -189,10 +252,6 @@ public:
 
 
 	//Accessors
-	glm::vec3 getPosition()
-	{
-		return this->position;
-	}
 
 	//Modifiers
 	void setPosition(const glm::vec3 position)

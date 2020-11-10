@@ -26,5 +26,3 @@
 #include"Mesh.h"
 #include"Model.h"
 #include"Light.h"
-#include "Brick.h"
-#include "GameObject.h"

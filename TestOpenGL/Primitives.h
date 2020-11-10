@@ -18,9 +18,9 @@ public:
 
 	//Functions
 	void set(const Vertex* vertices,
-			 const unsigned nrOfVertices,
-			 const GLuint* indices,
-			 const unsigned nrOfIndices)
+		const unsigned nrOfVertices,
+		const GLuint* indices,
+		const unsigned nrOfIndices)
 	{
 		for (size_t i = 0; i < nrOfVertices; i++)
 		{
@@ -69,16 +69,16 @@ public:
 class Quad : public Primitive
 {
 public:
-	Quad(float width, float height)
+	Quad()
 		: Primitive()
 	{
 		Vertex vertices[] =
 		{
-			//Position										//Color                             //Texcoord                    //Normals
-			glm::vec3(-width / 2, height / 2, 0.0f),        glm::vec3(1.0f, 0.0f, 0.0f),        glm::vec2(0.0f, 1.0f),        glm::vec3(0.0f, 0.0f, 1.0f),
-			glm::vec3(-width / 2, -height / 2, 0.0f),        glm::vec3(0.0f, 1.0f, 0.0f),        glm::vec2(0.0f, 0.0f),        glm::vec3(0.0f, 0.0f, 1.0f),
-			glm::vec3(width / 2, -height / 2, 0.0f),        glm::vec3(0.0f, 0.0f, 1.0f),        glm::vec2(1.0f, 0.0f),        glm::vec3(0.0f, 0.0f, 1.0f),
-			glm::vec3(width / 2, height / 2, 0.0f),        glm::vec3(1.0f, 1.0f, 0.0f),        glm::vec2(1.0f, 1.0f),        glm::vec3(0.0f, 0.0f, 1.0f)
+			//Position							//Color								//Texcoord					//Normals
+			glm::vec3(-0.5f, 0.5f, 0.0f),		glm::vec3(1.0f, 0.0f, 0.0f),		glm::vec2(0.0f, 1.0f),		glm::vec3(0.0f, 0.0f, 1.0f),
+			glm::vec3(-0.5f, -0.5f, 0.0f),		glm::vec3(0.0f, 1.0f, 0.0f),		glm::vec2(0.0f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),
+			glm::vec3(0.5f, -0.5f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),		glm::vec2(1.0f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),
+			glm::vec3(0.5f, 0.5f, 0.0f),		glm::vec3(1.0f, 1.0f, 0.0f),		glm::vec2(1.0f, 1.0f),		glm::vec3(0.0f, 0.0f, 1.0f)
 
 		};
 		unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
@@ -86,7 +86,35 @@ public:
 		GLuint indices[] =
 		{
 			0, 1, 2, //Tringle1
-			0, 2, 3     //Triangle2
+			0, 2, 3	 //Triangle2
+		};
+		unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
+
+		this->set(vertices, nrOfVertices, indices, nrOfIndices);
+	}
+};
+
+class Brick : public Primitive
+{
+public:
+	Brick(float width, float height)
+		: Primitive()
+	{
+		Vertex vertices[] =
+		{
+			//Position							//Color								//Texcoord					//Normals
+			glm::vec3(-width / 2, height / 2, 0.0f),		glm::vec3(1.0f, 0.0f, 0.0f),		glm::vec2(0.0f, 1.0f),		glm::vec3(0.0f, 0.0f, 1.0f),
+			glm::vec3(-width / 2, -height / 2, 0.0f),		glm::vec3(0.0f, 1.0f, 0.0f),		glm::vec2(0.0f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),
+			glm::vec3(width / 2, -height / 2, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),		glm::vec2(1.0f, 0.0f),		glm::vec3(0.0f, 0.0f, 1.0f),
+			glm::vec3(width / 2, height / 2, 0.0f),		glm::vec3(1.0f, 1.0f, 0.0f),		glm::vec2(1.0f, 1.0f),		glm::vec3(0.0f, 0.0f, 1.0f)
+
+		};
+		unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
+
+		GLuint indices[] =
+		{
+			0, 1, 2, //Tringle1
+			0, 2, 3	 //Triangle2
 		};
 		unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
 

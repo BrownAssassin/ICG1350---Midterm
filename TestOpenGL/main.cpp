@@ -12,6 +12,6 @@ int main()
 		game.render();
 		
 	}    
-	
+	 
 	return 0; 
 }

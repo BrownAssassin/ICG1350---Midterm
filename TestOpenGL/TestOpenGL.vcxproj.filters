@@ -21,10 +21,13 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
+    <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Level.cpp">
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,12 +68,6 @@
     <ClInclude Include="Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment_shader.glsl">
@@ -79,10 +76,10 @@
     <None Include="vertex_shader.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="instancing_fragment_shader.glsl">
+    <None Include="skybox_fragment_shader.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="instancing_vertex_shader.glsl">
+    <None Include="skybox_vertex_shader.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

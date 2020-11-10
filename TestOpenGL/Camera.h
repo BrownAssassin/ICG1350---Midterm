@@ -10,7 +10,7 @@
 #include <mat4x4.hpp>
 #include <gtc/matrix_transform.hpp>
 
-enum direction {FORWARD = 0, BACKWARD, LEFT, RIGHT};
+enum direction { FORWARD = 0, BACKWARD, LEFT, RIGHT };
 
 class Camera
 {
@@ -25,7 +25,7 @@ private:
 	glm::vec3 front;
 	glm::vec3 right;
 	glm::vec3 up;
-	
+
 	GLfloat pitch;
 	GLfloat yaw;
 	GLfloat roll;
@@ -73,11 +73,6 @@ public:
 		return this->ViewMatrix;
 	}
 
-	void setPosition(glm::vec3 position) 
-	{
-		this->position = position;
-	}
-
 	const glm::vec3 getPosition() const
 	{
 		return this->position;
@@ -115,7 +110,7 @@ public:
 		//Update pitch, yaw and roll
 		this->pitch += static_cast<GLfloat>(offsetY) * this->sensitivity * dt;
 		this->yaw += static_cast<GLfloat>(offsetX) * this->sensitivity * dt;
-		
+
 
 		if (this->pitch > 80.0f)
 			this->pitch = 80.0f;

@@ -4,11 +4,13 @@
 #include "Camera.h"
 
 
+
 //Enumerations
-enum shader_enums {	SHADER_CORE_PROGRAM = 0 };
+enum shader_enums { SHADER_CORE_PROGRAM = 0, SHADER_SKYBOX_PROGRAM };
 enum texture_enums { TEX_BLAZARK = 0, TEX_BLAZARK_SPECULAR, TEX_CONTAINER, TEX_CONTAINER_SPECULAR };
 enum material_enums { MAT_1 = 0 };
 enum mesh_enums { MESH_QUAD = 0 };
+enum GameState { GAME_ACTIVE, GAME_MENU, GAME_WIN };
 
 class Game
 {
@@ -54,10 +56,6 @@ private:
 	float nearPlane;
 	float farPlane;
 
-	int changeDirX = 1;
-	int changeDirY = 1;
-
-	 
 	//Shaders
 	std::vector<Shader*> shaders;
 
@@ -70,11 +68,19 @@ private:
 	//Models
 	std::vector<Model*> models;
 
-	//Bricks
-	std::vector<Brick*> bricks;
-
 	//Lights
 	std::vector<glm::vec3*> lights;
+
+	//Cubemap
+	std::vector<const GLchar*> faces;
+
+
+
+	//Brick Breaker
+	unsigned int level;
+	GameState state;
+	bool keys[1024];
+	unsigned int gameWidth, gameHeight;
 
 	//Private functions
 	void initGLFW();
@@ -85,10 +91,11 @@ private:
 	void initShaders();
 	void initInstancingShaders();
 	void initTextures();
+	//void initCubemap();
 	void initMaterials();
-	void initOBJModels();
-	void initBricks(float rows, float cols, float width, float height, float horDist, float verDist);
+	void initBricks(GLint rows, GLint cols, GLint width, GLint height, GLint horDistance = 0, GLint verDistance = 0);
 	void initModels();
+	void initLevels();
 	void initLights();
 	void initUniforms();
 
@@ -113,11 +120,57 @@ public:
 	void updateKeyboardInput();
 	void updateGamepadInput();
 	void updateInput();
-	void updateModels();
 	void update();
 	void render();
 
 	//Static functions
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);
+	GLuint skyboxVAO;
+	GLuint cubemapTexture;
+
+	GLfloat skyboxVertices[108] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
 };
 
