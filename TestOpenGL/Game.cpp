@@ -1,268 +1,5 @@
 #include "Game.h"
 
-//General Functions
-
-//Private functions
-void Game::initGLFW()
-{
-	if (glfwInit() == GLFW_FALSE)
-	{
-		std::cout << "ERROR::GLFW_INIT_FAILED" << "\n";
-		glfwTerminate();
-	}
-}
-
-void Game::initWindow(const char* title, bool resizable)
-{
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, this->GL_VERSION_MAJOR);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, this->GL_VERSION_MINOR);
-	glfwWindowHint(GLFW_RESIZABLE, resizable);
-
-	this->window = glfwCreateWindow(this->WINDOW_WIDTH, this->WINDOW_HEIGHT, title, NULL, NULL);
-
-	if (this->window == nullptr)
-	{
-		std::cout << "ERROR::GLFW_WINDOW_INIT_FAILED" << "\n";
-		glfwTerminate();
-	}
-
-	glfwGetFramebufferSize(this->window, &this->framebufferWidth, &this->framebufferHeight);
-	glfwSetFramebufferSizeCallback(this->window, Game::framebuffer_resize_callback);
-
-	//glViewport(0, 0, framebufferWidth, framebufferHeight);
-
-	glfwMakeContextCurrent(this->window); //IMPORTANT!!
-}
-
-void Game::initGLEW()
-{
-	//INIT GLEW (NEEDS WINDOW AND OPENGL CONTEXT)
-	glewExperimental = GL_TRUE;
-
-	//Error Check
-	if (glewInit() != GLEW_OK)
-	{
-		std::cout << "Error::MAIN.CPP::GLEW_INIT_FAILED" << "\n";
-		glfwTerminate();
-	}
-}
-
-void Game::initOpenGLOptions()
-{
-	glEnable(GL_DEPTH_TEST);
-
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // change if you want to draw only outline GL_LINE
-
-	//Input
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-}
-
-void Game::initMatrices(bool isPerspective)
-{
-	this->ViewMatrix = glm::mat4(1.0f);
-	this->ViewMatrix = glm::lookAt(this->camPosition, this->camPosition + this->camFront, this->worldUp);
-
-	this->ProjectionMatrix = glm::mat4(1.0f);
-
-	this->isPerspective = isPerspective;
-
-	if (this->isPerspective)
-		this->ProjectionMatrix = glm::perspective(glm::radians(this->fov), static_cast<float>(this->framebufferWidth) / this->framebufferHeight, this->nearPlane, this->farPlane);
-	else
-		this->ProjectionMatrix = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, this->nearPlane, this->farPlane);
-}
-
-void Game::initShaders()
-{
-	this->shaders.push_back(new Shader(this->GL_VERSION_MAJOR, this->GL_VERSION_MINOR, "vertex_shader.glsl", "fragment_shader.glsl"));
-
-	//skybox shader
-	this->shaders.push_back(new Shader(this->GL_VERSION_MAJOR, this->GL_VERSION_MINOR, "skybox_vertex_shader.glsl", "skybox_fragment_shader.glsl"));
-}
-
-void Game::initInstancingShaders()
-{
-	//this->shaders.push_back(new Shader(this->GL_VERSION_MAJOR, this->GL_VERSION_MINOR, "instancing_vertex_shader.glsl", "instancing_fragment_shader.glsl"));
-}
-
-void Game::initTextures()
-{
-	//Texture0
-	this->textures.push_back(new Texture("Images/bic.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Images/bic_specular.png", GL_TEXTURE_2D));
-
-	//Texture1
-	this->textures.push_back(new Texture("Images/container.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Images/container_specular.png", GL_TEXTURE_2D));
-}
-
-//void Game::initCubemap()
-//{
-//	this->faces.push_back("Images/1.png");
-//	this->faces.push_back("Images/2.png");
-//	this->faces.push_back("Images/3.png");
-//	this->faces.push_back("Images/4.png");
-//	this->faces.push_back("Images/5.png");
-//	this->faces.push_back("Images/6.png");
-//
-//	//this->faces.push_back(new Texture(this->faces, GL_TEXTURE_CUBE_MAP));
-//}
-
-void Game::initMaterials()
-{
-	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.0f), glm::vec3(2.0f), 0, 1));
-}
-
-void Game::initBricks(GLint rows, GLint cols, GLint width, GLint height, GLint horDistance, GLint verDistance)
-{
-	Mesh* mesh;
-
-	mesh = new Mesh(&Quad(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-
-	for (size_t y = 0; y < rows; y++)
-		for (size_t x = 0; x < cols; x++)
-		{
-			this->models.push_back(new Model(
-				glm::vec3(x * (width + horDistance), y * (width + horDistance), -1.0f),
-				this->materials[0],
-				this->textures[TEX_CONTAINER],
-				this->textures[TEX_CONTAINER_SPECULAR],
-				mesh
-			)
-			);
-
-
-		}
-}
-
-void Game::initModels()
-{
-	std::vector<Mesh*>meshes;
-
-	int width = 5;
-	int height = 2;
-	int horDist = 1;
-	int verDist = 1;
-
-	meshes.push_back(new Mesh(&Brick(width, height), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-	//meshes.push_back(new Mesh(&Cube(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-
-	/*this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));*/
-
-	//initBricks(5, 5, 10, 5, 1, 1);
-
-	/*this->models.push_back(new Model(
-		glm::vec3(-10.0f, 2.0f, 4.0f),
-		this->materials[0],
-		this->textures[0],
-		this->textures[1],
-		"OBJFiles/playerShip.obj"
-	)
-	);*/
-
-	/*for (size_t y = 0; y < 5; y++)
-		for (size_t x = 0; x < 5; x++)
-		{
-			this->models.push_back(new Model(
-				glm::vec3(x * (width + horDist), y * (height + verDist), -1.0f),
-				this->materials[0],
-				this->textures[TEX_CONTAINER],
-				this->textures[TEX_CONTAINER_SPECULAR],
-				meshes
-			)
-			);
-		}*/
-
-		//cube 1
-	this->models.push_back(new Model(
-		glm::vec3(0.0f, 0.0f, -1.0f),
-		this->materials[0],
-		this->textures[TEX_CONTAINER],
-		this->textures[TEX_CONTAINER_SPECULAR],
-		meshes
-	)
-	);
-
-	/*
-	this->models.push_back(new Model(
-		glm::vec3(0.0f, 2.0f, -1.0f),
-		this->materials[0],
-		this->textures[0],
-		this->textures[1],
-		meshes
-	)
-	);
-
-	this->models.push_back(new Model(
-		glm::vec3(4.0f, 2.0f, 4.0f),
-		this->materials[0],
-		this->textures[0],
-		this->textures[1],
-		"OBJFiles/monkey.obj"
-	)
-	);
-
-	*/
-	/*this->models.push_back(new Model(
-		glm::vec3(2.0f, 0.0f, 2.0f),
-		this->materials[0],
-		this->textures[TEX_CONTAINER],
-		this->textures[TEX_CONTAINER_SPECULAR],
-		meshes
-		)
-	);*/
-
-	for (auto*& i : meshes)
-		delete i;
-}
-
-void Game::initLevels()
-{
-	//Level one;
-	//one.Load("Levels/one.lvl", )
-}
-
-void Game::initLights()
-{
-	this->lights.push_back(new glm::vec3(0.0f, 0.0f, 1.0f));
-}
-
-void Game::initUniforms()
-{
-	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(ViewMatrix, "ViewMatrix");
-	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(ProjectionMatrix, "ProjectionMatrix");
-
-	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(*this->lights[0], "lightPos0");
-
-}
-
-void Game::updateUniforms()
-{
-	//Update view matrix (camera)
-	this->ViewMatrix = this->camera.getViewMatrix();
-
-	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->ViewMatrix, "ViewMatrix");
-	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.getPosition(), "cameraPos");
-
-	//Update frame buffer size and projection matrix
-	glfwGetFramebufferSize(this->window, &this->framebufferWidth, &this->framebufferHeight);
-
-	if (this->isPerspective)
-		this->ProjectionMatrix = glm::perspective(glm::radians(this->fov), static_cast<float>(this->framebufferWidth) / this->framebufferHeight, this->nearPlane, this->farPlane);
-	else
-		this->ProjectionMatrix = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, this->nearPlane, this->farPlane);
-
-	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->ProjectionMatrix, "ProjectionMatrix");
-}
-
 //Constructors/destructors
 Game::Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, const int GL_VERSION_MAJOR, const int GL_VERSION_MINOR, bool resizable)
 	: WINDOW_WIDTH(WINDOW_WIDTH), WINDOW_HEIGHT(WINDOW_HEIGHT), GL_VERSION_MAJOR(GL_VERSION_MAJOR), GL_VERSION_MINOR(GL_VERSION_MINOR), camera(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f))
@@ -304,27 +41,8 @@ Game::Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, c
 	this->initModels();
 	this->initLights();
 	this->initUniforms();
+	this->initSkybox();
 
-	// Setup skybox VAO
-	GLuint skyboxVBO;
-	glGenVertexArrays(1, &this->skyboxVAO);
-	glGenBuffers(1, &skyboxVBO);
-	glBindVertexArray(this->skyboxVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, this->skyboxVAO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glBindVertexArray(0);
-
-	// Cubemap (Skybox)
-	std::vector<const GLchar*> faces;
-	faces.push_back("Images/1.png");
-	faces.push_back("Images/2.png");
-	faces.push_back("Images/3.png");
-	faces.push_back("Images/4.png");
-	faces.push_back("Images/5.png");
-	faces.push_back("Images/6.png");
-	this->cubemapTexture = Texture::LoadCubemap(faces);
 }
 
 
@@ -489,6 +207,27 @@ void Game::updateInput()
 	this->camera.updateInput(dt, -1, this->mouseOffsetX, this->mouseOffsetY);
 }
 
+void Game::updateSkybox()
+{
+	//Draw Skybox
+	glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
+	this->shaders[SHADER_SKYBOX_PROGRAM]->use();
+	ViewMatrix = glm::mat4(glm::mat3(camera.getViewMatrix()));	// Remove any translation component of the view matrix
+	glUniformMatrix4fv(glGetUniformLocation(this->shaders[SHADER_SKYBOX_PROGRAM]->id, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(this->shaders[SHADER_SKYBOX_PROGRAM]->id, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+	// skybox cube
+	glBindVertexArray(this->skyboxVAO);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, this->cubemapTexture);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+	glDepthFunc(GL_LESS); // Set depth function back to default
+
+	glBindVertexArray(0);
+	glUseProgram(0);
+	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void Game::update()
 {
 	//UPDATE INPUT ---
@@ -515,6 +254,8 @@ void Game::render()
 	//Update the uniforms
 	this->updateUniforms();
 
+	this->updateSkybox();
+
 	//Render models
 	/*for(auto& i : this->models)
 		i->render(this->shaders[SHADER_CORE_PROGRAM]);*/
@@ -525,19 +266,7 @@ void Game::render()
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	// Draw skybox as last
-	glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
-	this->shaders[SHADER_SKYBOX_PROGRAM]->use();
-	ViewMatrix = glm::mat4(glm::mat3(camera.getViewMatrix()));	// Remove any translation component of the view matrix
-	glUniformMatrix4fv(glGetUniformLocation(this->shaders[SHADER_SKYBOX_PROGRAM]->id, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
-	glUniformMatrix4fv(glGetUniformLocation(this->shaders[SHADER_SKYBOX_PROGRAM]->id, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
 
-	// skybox cube
-	glBindVertexArray(this->skyboxVAO);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, this->cubemapTexture);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindVertexArray(0);
-	glDepthFunc(GL_LESS); // Set depth function back to default
 
 	//END DRAW
 	glfwSwapBuffers(window);
@@ -549,3 +278,259 @@ void Game::framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH)
 {
 	glViewport(0, 0, fbW, fbH);
 };
+
+//Private functions
+void Game::initGLFW()
+{
+	if (glfwInit() == GLFW_FALSE)
+	{
+		std::cout << "ERROR::GLFW_INIT_FAILED" << "\n";
+		glfwTerminate();
+	}
+}
+
+void Game::initWindow(const char* title, bool resizable)
+{
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, this->GL_VERSION_MAJOR);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, this->GL_VERSION_MINOR);
+	glfwWindowHint(GLFW_RESIZABLE, resizable);
+
+	this->window = glfwCreateWindow(this->WINDOW_WIDTH, this->WINDOW_HEIGHT, title, NULL, NULL);
+
+	if (this->window == nullptr)
+	{
+		std::cout << "ERROR::GLFW_WINDOW_INIT_FAILED" << "\n";
+		glfwTerminate();
+	}
+
+	glfwGetFramebufferSize(this->window, &this->framebufferWidth, &this->framebufferHeight);
+	glfwSetFramebufferSizeCallback(this->window, Game::framebuffer_resize_callback);
+
+	//glViewport(0, 0, framebufferWidth, framebufferHeight);
+
+	glfwMakeContextCurrent(this->window); //IMPORTANT!!
+}
+
+void Game::initGLEW()
+{
+	//INIT GLEW (NEEDS WINDOW AND OPENGL CONTEXT)
+	glewExperimental = GL_TRUE;
+
+	//Error Check
+	if (glewInit() != GLEW_OK)
+	{
+		std::cout << "Error::MAIN.CPP::GLEW_INIT_FAILED" << "\n";
+		glfwTerminate();
+	}
+}
+
+void Game::initOpenGLOptions()
+{
+	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // change if you want to draw only outline GL_LINE
+
+	//Input
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Game::initMatrices(bool isPerspective)
+{
+	this->ViewMatrix = glm::mat4(1.0f);
+	this->ViewMatrix = glm::lookAt(this->camPosition, this->camPosition + this->camFront, this->worldUp);
+
+	this->ProjectionMatrix = glm::mat4(1.0f);
+
+	this->isPerspective = isPerspective;
+
+	if (this->isPerspective)
+		this->ProjectionMatrix = glm::perspective(glm::radians(this->fov), static_cast<float>(this->framebufferWidth) / this->framebufferHeight, this->nearPlane, this->farPlane);
+	else
+		this->ProjectionMatrix = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, this->nearPlane, this->farPlane);
+}
+
+void Game::initShaders()
+{
+	this->shaders.push_back(new Shader(this->GL_VERSION_MAJOR, this->GL_VERSION_MINOR, "vertex_shader.glsl", "fragment_shader.glsl"));
+
+	//skybox shader
+	this->shaders.push_back(new Shader(this->GL_VERSION_MAJOR, this->GL_VERSION_MINOR, "skybox_vertex_shader.glsl", "skybox_fragment_shader.glsl"));
+}
+
+
+void Game::initTextures()
+{
+	//Texture0
+	this->textures.push_back(new Texture("Images/bic.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Images/bic_specular.png", GL_TEXTURE_2D));
+
+	//Texture1
+	this->textures.push_back(new Texture("Images/container.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Images/container_specular.png", GL_TEXTURE_2D));
+}
+
+//void Game::initCubemap()
+//{
+//	this->faces.push_back("Images/1.png");
+//	this->faces.push_back("Images/2.png");
+//	this->faces.push_back("Images/3.png");
+//	this->faces.push_back("Images/4.png");
+//	this->faces.push_back("Images/5.png");
+//	this->faces.push_back("Images/6.png");
+//
+//	//this->faces.push_back(new Texture(this->faces, GL_TEXTURE_CUBE_MAP));
+//}
+
+void Game::initMaterials()
+{
+	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.0f), glm::vec3(2.0f), 0, 1));
+}
+
+
+void Game::initModels()
+{
+	std::vector<Mesh*>meshes;
+
+	int width = 5;
+	int height = 2;
+	int horDist = 1;
+	int verDist = 1;
+
+	meshes.push_back(new Mesh(&Brick(width, height), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+	//meshes.push_back(new Mesh(&Cube(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+
+	/*this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));*/
+
+	//initBricks(5, 5, 10, 5, 1, 1);
+
+	/*this->models.push_back(new Model(
+		glm::vec3(-10.0f, 2.0f, 4.0f),
+		this->materials[0],
+		this->textures[0],
+		this->textures[1],
+		"OBJFiles/playerShip.obj"
+	)
+	);*/
+
+	/*for (size_t y = 0; y < 5; y++)
+		for (size_t x = 0; x < 5; x++)
+		{
+			this->models.push_back(new Model(
+				glm::vec3(x * (width + horDist), y * (height + verDist), -1.0f),
+				this->materials[0],
+				this->textures[TEX_CONTAINER],
+				this->textures[TEX_CONTAINER_SPECULAR],
+				meshes
+			)
+			);
+		}*/
+
+		//cube 1
+	this->models.push_back(new Model(
+		glm::vec3(0.0f, 0.0f, -1.0f),
+		this->materials[0],
+		this->textures[TEX_CONTAINER],
+		this->textures[TEX_CONTAINER_SPECULAR],
+		meshes
+	)
+	);
+
+	/*
+	this->models.push_back(new Model(
+		glm::vec3(0.0f, 2.0f, -1.0f),
+		this->materials[0],
+		this->textures[0],
+		this->textures[1],
+		meshes
+	)
+	);
+
+	this->models.push_back(new Model(
+		glm::vec3(4.0f, 2.0f, 4.0f),
+		this->materials[0],
+		this->textures[0],
+		this->textures[1],
+		"OBJFiles/monkey.obj"
+	)
+	);
+
+	*/
+	/*this->models.push_back(new Model(
+		glm::vec3(2.0f, 0.0f, 2.0f),
+		this->materials[0],
+		this->textures[TEX_CONTAINER],
+		this->textures[TEX_CONTAINER_SPECULAR],
+		meshes
+		)
+	);*/
+
+	for (auto*& i : meshes)
+		delete i;
+}
+
+void Game::initLights()
+{
+	this->lights.push_back(new glm::vec3(0.0f, 0.0f, 1.0f));
+}
+
+void Game::initUniforms()
+{
+	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(ViewMatrix, "ViewMatrix");
+	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(ProjectionMatrix, "ProjectionMatrix");
+
+	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(*this->lights[0], "lightPos0");
+
+}
+
+void Game::initSkybox()
+{
+	// Setup skybox VAO
+	GLuint skyboxVBO;
+	glGenVertexArrays(1, &this->skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+	glBindVertexArray(this->skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, this->skyboxVAO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glBindVertexArray(0);
+
+	// Cubemap (Skybox)
+	std::vector<const GLchar*> faces;
+	faces.push_back("Images/1.png");
+	faces.push_back("Images/2.png");
+	faces.push_back("Images/3.png");
+	faces.push_back("Images/4.png");
+	faces.push_back("Images/5.png");
+	faces.push_back("Images/6.png");
+	this->cubemapTexture = Texture::LoadCubemap(faces);
+}
+
+void Game::updateUniforms()
+{
+	//Update view matrix (camera)
+	this->ViewMatrix = this->camera.getViewMatrix();
+
+	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->ViewMatrix, "ViewMatrix");
+	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.getPosition(), "cameraPos");
+
+	//Update frame buffer size and projection matrix
+	glfwGetFramebufferSize(this->window, &this->framebufferWidth, &this->framebufferHeight);
+
+	if (this->isPerspective)
+		this->ProjectionMatrix = glm::perspective(glm::radians(this->fov), static_cast<float>(this->framebufferWidth) / this->framebufferHeight, this->nearPlane, this->farPlane);
+	else
+		this->ProjectionMatrix = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, this->nearPlane, this->farPlane);
+
+	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->ProjectionMatrix, "ProjectionMatrix");
+}
+
+

@@ -11,13 +11,6 @@
 
 class Texture
 {
-private:
-	GLuint id;
-	int width;
-	int height;
-	unsigned int type;
-
-
 public:
 	Texture(const char* fileName, GLenum type);
 
@@ -37,5 +30,12 @@ public:
 	void loadFromFile(const char* fileName);
 
 	static GLuint LoadCubemap(std::vector<const GLchar* > faces);
+
+
+private:
+	GLuint id;
+	int width;
+	int height;
+	unsigned int type;
 };
 

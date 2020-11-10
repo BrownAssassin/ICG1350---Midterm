@@ -14,6 +14,32 @@ enum GameState { GAME_ACTIVE, GAME_MENU, GAME_WIN };
 
 class Game
 {
+public:
+	//Constructors/destructors
+	Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, const int GL_VERSION_MAJOR, const int GL_VERSION_MINOR, bool resizable);
+	virtual ~Game();
+
+	//Accessors
+	int getWindowShouldClose();
+
+	//Modifiers
+	void setWindowShouldClose();
+
+	//Functions	
+	void updateDt();
+	void updateMouseInput();
+	void updateKeyboardInput();
+	void updateGamepadInput();
+	void updateInput();
+	void updateSkybox();
+	void update();
+	void render();
+
+
+	//Static functions
+	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);
+
+
 private:
 	//Variables
 	//Window
@@ -74,59 +100,11 @@ private:
 	//Cubemap
 	std::vector<const GLchar*> faces;
 
-
-
 	//Brick Breaker
 	unsigned int level;
 	GameState state;
 	bool keys[1024];
 	unsigned int gameWidth, gameHeight;
-
-	//Private functions
-	void initGLFW();
-	void initWindow(const char* title, bool resizable);
-	void initGLEW(); //AFTER CONTEXT CREATION!!!
-	void initOpenGLOptions();
-	void initMatrices(bool isPerspective = true);
-	void initShaders();
-	void initInstancingShaders();
-	void initTextures();
-	//void initCubemap();
-	void initMaterials();
-	void initBricks(GLint rows, GLint cols, GLint width, GLint height, GLint horDistance = 0, GLint verDistance = 0);
-	void initModels();
-	void initLevels();
-	void initLights();
-	void initUniforms();
-
-	void updateUniforms();
-
-	//Static variables
-
-public:
-	//Constructors/destructors
-	Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, const int GL_VERSION_MAJOR, const int GL_VERSION_MINOR, bool resizable);
-	virtual ~Game();
-
-	//Accessors
-	int getWindowShouldClose();
-
-	//Modifiers
-	void setWindowShouldClose();
-
-	//Functions	
-	void updateDt();
-	void updateMouseInput();
-	void updateKeyboardInput();
-	void updateGamepadInput();
-	void updateInput();
-	void update();
-	void render();
-
-	//Static functions
-	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);
-	GLuint skyboxVAO;
-	GLuint cubemapTexture;
 
 	GLfloat skyboxVertices[108] = {
 		// positions          
@@ -172,5 +150,26 @@ public:
 		-1.0f, -1.0f,  1.0f,
 		 1.0f, -1.0f,  1.0f
 	};
+	GLuint skyboxVAO;
+	GLuint cubemapTexture;
+
+	//Private functions
+	void initGLFW();
+	void initWindow(const char* title, bool resizable);
+	void initGLEW(); //AFTER CONTEXT CREATION!!!
+	void initOpenGLOptions();
+	void initMatrices(bool isPerspective = true);
+	void initShaders();
+	void initTextures();
+	void initMaterials();
+	void initModels();
+	void initLights();
+	void initUniforms();
+	void initSkybox();
+
+	void updateUniforms();
+
+	//Static variables
+	
 };
 
