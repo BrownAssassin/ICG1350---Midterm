@@ -1,16 +1,2 @@
-﻿  Entity.cpp
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Entity.cpp(33,19): error C2039: 'getPosition': is not a member of 'Entity'
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Entity.h(7): message : see declaration of 'Entity'
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Entity.cpp(35,9): error C2065: 'm_position': undeclared identifier
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Entity.cpp(38,19): error C2039: 'getSize': is not a member of 'Entity'
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Entity.h(7): message : see declaration of 'Entity'
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Entity.cpp(40,9): error C2065: 'm_size': undeclared identifier
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Entity.cpp(43,19): error C2039: 'getRotation': is not a member of 'Entity'
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Entity.h(7): message : see declaration of 'Entity'
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Entity.cpp(45,9): error C2065: 'm_rotation': undeclared identifier
-  Game.cpp
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Game.cpp(407,42): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\TestOpenGL\Game.cpp(407,35): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Model.cpp
-  main.cpp
-  Generating Code...
+﻿  Mesh.cpp
+  TestOpenGL.vcxproj -> D:\School\UOIT\Year2_Semester1\Computer-Graphics-Midterm\Debug\TestOpenGL.exe
