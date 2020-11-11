@@ -1,5 +1,20 @@
 #include "Model.h"
 
+//Model::Model(glm::vec3 position, Material* material, Texture* overrideTextureDiffuse, Texture* overrideTextureSpecular, Mesh* meshes)
+//{
+//	this->position = position;
+//	this->material = material;
+//	this->overrideTextureDiffuse = overrideTextureDiffuse;
+//	this->overrideTextureSpecular = overrideTextureSpecular;
+//
+//	
+//		this->meshes = meshes;
+//
+//		this->meshes->move(this->position);
+//		this->meshes->setOrigin(this->position);
+//	
+//}
+
 Model::Model(glm::vec3 position, Material* material, Texture* overrideTextureDiffuse, Texture* overrideTextureSpecular, Mesh* mesh)
 {
 	this->position = position;
@@ -34,8 +49,8 @@ Model::Model(glm::vec3 position, Material* material, Texture* overrideTextureDif
 }
 
 Model::~Model()
-{
-		delete this->meshes;
+{	
+	delete this->meshes;
 }
 
 void Model::SetPosition(const glm::vec3 position)

@@ -51,10 +51,6 @@ Game::~Game()
 	glfwDestroyWindow(this->window);
 	glfwTerminate();
 
-
-	for (unsigned int i = 0; i < this->entity.size(); i++)
-		delete this->entity[i]->GetModel();
-
 	for (size_t i = 0; i < this->shaders.size(); i++)
 		delete this->shaders[i];
 
@@ -63,6 +59,12 @@ Game::~Game()
 
 	for (size_t i = 0; i < this->materials.size(); i++)
 		delete this->materials[i];
+
+	/*for (auto*& i : this->models)
+		delete i;*/
+
+	for (auto*& i : this->entities)
+		delete i;
 
 	for (size_t i = 0; i < this->lights.size(); i++)
 		delete this->lights[i];
@@ -155,6 +157,21 @@ void Game::updateGamepadInput()
 	{
 		int axesCount;
 		const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axesCount);
+		/*std::cout << std::endl;
+		std::cout << std::endl;
+		std::cout << std::endl;
+		std::cout << std::endl;
+		std::cout << std::endl;
+		std::cout << std::endl;
+
+		std::cout << "Left stick X Axis: " << axes[0] << std::endl;
+		std::cout << "Left stick Y Axis: " << axes[1] << std::endl;
+
+		std::cout << "Right stick X Axis: " << axes[2] << std::endl;
+		std::cout << "Right stick Y Axis: " << axes[3] << std::endl;
+
+		std::cout << "Left Trigger: " << axes[4] << std::endl;
+		std::cout << "Right Trigger: " << axes[5] << std::endl;*/
 
 		int buttonCount;
 		const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount);
@@ -219,6 +236,11 @@ void Game::update()
 	//UPDATE INPUT ---
 	this->updateDt();
 	this->updateInput();
+
+	//this->models[0]->rotate(glm::vec3(0.0f, 2.0f, 0.0f));
+	//this->models[1]->rotate(glm::vec3(0.0f, 1.0f, 0.0f));
+	//this->models[2]->rotate(glm::vec3(0.0f, 1.0f, 0.0f));
+	/*std::cout << "DT: " << this->dt << "\n" << "Mouse offsetX: " << this->mouseOffsetX << " Mouse offsetY: " << this->mouseOffsetY << "\n";*/
 }
 
 void Game::render()
@@ -238,8 +260,13 @@ void Game::render()
 	this->updateSkybox();
 
 	//Render models
-	for(auto& i : this->entity)
-		i->GetModel()->render(this->shaders[SHADER_CORE_PROGRAM]);
+	/*for(auto& i : this->models)
+		i->render(this->shaders[SHADER_CORE_PROGRAM]);*/
+
+
+	for(auto& i : this->entities)
+		i->getModel()->render(this->shaders[SHADER_CORE_PROGRAM]);
+
 
 
 	glBindVertexArray(0);
@@ -358,6 +385,18 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("Images/container_specular.png", GL_TEXTURE_2D));
 }
 
+//void Game::initCubemap()
+//{
+//	this->faces.push_back("Images/1.png");
+//	this->faces.push_back("Images/2.png");
+//	this->faces.push_back("Images/3.png");
+//	this->faces.push_back("Images/4.png");
+//	this->faces.push_back("Images/5.png");
+//	this->faces.push_back("Images/6.png");
+//
+//	//this->faces.push_back(new Texture(this->faces, GL_TEXTURE_CUBE_MAP));
+//}
+
 void Game::initMaterials()
 {
 	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.0f), glm::vec3(2.0f), 0, 1));
@@ -366,7 +405,61 @@ void Game::initMaterials()
 
 void Game::initModels()
 {
+	std::vector<Mesh*>meshes;
 
+	int width = 5;
+	int height = 2;
+	int horDist = 1;
+	int verDist = 1;
+
+	meshes.push_back(new Mesh(&Brick(width, height), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+	//meshes.push_back(new Mesh(&Cube(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+
+	/*this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));*/
+
+	//initBricks(5, 5, 10, 5, 1, 1);
+
+	/*this->models.push_back(new Model(
+		glm::vec3(-10.0f, 2.0f, 4.0f),
+		this->materials[0],
+		this->textures[0],
+		this->textures[1],
+		"OBJFiles/playerShip.obj"
+	)
+	);*/
+
+	/*for (size_t y = 0; y < 5; y++)
+		for (size_t x = 0; x < 5; x++)
+		{
+			this->models.push_back(new Model(
+				glm::vec3(x * (width + horDist), y * (height + verDist), -1.0f),
+				this->materials[0],
+				this->textures[TEX_CONTAINER],
+				this->textures[TEX_CONTAINER_SPECULAR],
+				meshes
+			)
+			);
+		}*/
+
+		//cube 1
+	/*this->models.push_back(new Model(
+		glm::vec3(0.0f, 0.0f, -1.0f),
+		this->materials[0],
+		this->textures[TEX_CONTAINER],
+		this->textures[TEX_CONTAINER_SPECULAR],
+		meshes
+	)
+	);*/
+
+
+	/*this->models.push_back(new Model(
+		glm::vec3(0.0f, 0.0f, -10.0f),
+		this->materials[0],
+		this->textures[0],
+		this->textures[1],
+		"OBJFiles/playerShip2.obj"
+	)
+	);*/
 
 	Model* temp = new Model(
 		glm::vec3(0.0f, 0.0f, -10.0f),
@@ -376,8 +469,49 @@ void Game::initModels()
 		"OBJFiles/playerShip2.obj"
 	);
 
-	
-	entity.push_back(new Entity(*temp,Entity::PLAYER));
+	entities.push_back(new Entity(temp, 0));
+
+	temp = new Model(
+		glm::vec3(0.0f, 0.0f, 10.0f),
+		this->materials[0],
+		this->textures[0],
+		this->textures[1],
+		"OBJFiles/monkey.obj"
+	);
+
+	entities.push_back(new Entity(temp, 0));
+
+	/*
+	this->models.push_back(new Model(
+		glm::vec3(0.0f, 2.0f, -1.0f),
+		this->materials[0],
+		this->textures[0],
+		this->textures[1],
+		meshes
+	)
+	);
+
+	this->models.push_back(new Model(
+		glm::vec3(4.0f, 2.0f, 4.0f),
+		this->materials[0],
+		this->textures[0],
+		this->textures[1],
+		"OBJFiles/monkey.obj"
+	)
+	);
+
+	*/
+	/*this->models.push_back(new Model(
+		glm::vec3(2.0f, 0.0f, 2.0f),
+		this->materials[0],
+		this->textures[TEX_CONTAINER],
+		this->textures[TEX_CONTAINER_SPECULAR],
+		meshes
+		)
+	);*/
+
+	for (auto*& i : meshes)
+		delete i;
 }
 
 void Game::initLights()

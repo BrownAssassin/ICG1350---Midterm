@@ -2,7 +2,7 @@
 
 #include "libs.h"
 #include "Camera.h"
-#include"Entity.h"
+#include "Entity.h"
 
 
 //Enumerations
@@ -91,7 +91,9 @@ private:
 	std::vector<Material*> materials;
 
 	//Models
-	std::vector<Entity*> entity;
+	//std::vector<Model*> models;
+
+	std::vector<Entity*> entities;
 
 	//Lights
 	std::vector<glm::vec3*> lights;

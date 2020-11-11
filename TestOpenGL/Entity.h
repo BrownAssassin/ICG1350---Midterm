@@ -7,21 +7,28 @@
 class Entity
 {
 public:
-
-	enum ID {
-		PLAYER=0,
-		ENEMY,
-		BULLET=2000
-	};
-
-
-	Entity(Model model, unsigned int id, glm::vec3 vel = glm::vec3(0), bool isdes = false)
+	Entity(Model* model, unsigned int id, glm::vec3 vel = glm::vec3(0), bool isdes = false)
 		:m_model(model),
 		m_ID(id),
 		m_isDestroyed(isdes),
 		m_velocity(vel)
 	{
 	}
+
+	~Entity()
+	{
+		delete this->m_model;
+	}
+
+	/*Entity(glm::vec3 pos, glm::vec3 size, glm::vec3 rot, glm::vec3 vel, Texture* tex, Mesh* mesh, Model* model): m_model(model) {
+
+
+		setPosition(pos);
+		setSize(size);
+		setRotation(rot);
+		setvelocity(vel);
+
+	}*/
 
 	void setPosition(glm::vec3 pos);
 	void setSize(glm::vec3 size);
@@ -30,13 +37,12 @@ public:
 	void setID(int id);
 	void setDestroyed(bool isdestroyed);
 	
-	Model* GetModel();
-
 	glm::vec3 getVelocity();
 
 	glm::vec3 getPosition();
 	glm::vec3 getRotation();
 	glm::vec3 getSize();
+	Model* getModel();
 
 	int getID();
 	bool getIsDestroyed();
@@ -44,9 +50,10 @@ public:
 private:
 	glm::vec3 m_velocity;
 
-	Model m_model;
+	Model* m_model;
 	//GLuint m_shader_prog
 
 	unsigned int m_ID; 
 	bool m_isDestroyed;
+	GLuint VAO;
 };
