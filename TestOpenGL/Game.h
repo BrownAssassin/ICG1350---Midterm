@@ -10,7 +10,6 @@ enum shader_enums { SHADER_CORE_PROGRAM = 0, SHADER_SKYBOX_PROGRAM };
 enum texture_enums { TEX_BLAZARK = 0, TEX_BLAZARK_SPECULAR, TEX_CONTAINER, TEX_CONTAINER_SPECULAR };
 enum material_enums { MAT_1 = 0 };
 enum mesh_enums { MESH_QUAD = 0 };
-enum GameState { GAME_ACTIVE, GAME_MENU, GAME_WIN };
 
 class Game
 {
@@ -97,15 +96,7 @@ private:
 	//Lights
 	std::vector<glm::vec3*> lights;
 
-	//Cubemap
-	std::vector<const GLchar*> faces;
-
-	//Brick Breaker
-	unsigned int level;
-	GameState state;
-	bool keys[1024];
-	unsigned int gameWidth, gameHeight;
-
+	//Skybox
 	GLfloat skyboxVertices[108] = {
 		// positions          
 		-1.0f,  1.0f, -1.0f,

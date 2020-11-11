@@ -215,14 +215,14 @@ void Game::updateSkybox()
 	ViewMatrix = glm::mat4(glm::mat3(camera.getViewMatrix()));	// Remove any translation component of the view matrix
 	glUniformMatrix4fv(glGetUniformLocation(this->shaders[SHADER_SKYBOX_PROGRAM]->id, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(this->shaders[SHADER_SKYBOX_PROGRAM]->id, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
-	// skybox cube
+	//skybox cube
 	glBindVertexArray(this->skyboxVAO);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, this->cubemapTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 	glDepthFunc(GL_LESS); // Set depth function back to default
 
-	glBindVertexArray(0);
+	//Reset
 	glUseProgram(0);
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -257,8 +257,8 @@ void Game::render()
 	this->updateSkybox();
 
 	//Render models
-	/*for(auto& i : this->models)
-		i->render(this->shaders[SHADER_CORE_PROGRAM]);*/
+	for(auto& i : this->models)
+		i->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 
 	glBindVertexArray(0);
@@ -434,12 +434,22 @@ void Game::initModels()
 		}*/
 
 		//cube 1
-	this->models.push_back(new Model(
+	/*this->models.push_back(new Model(
 		glm::vec3(0.0f, 0.0f, -1.0f),
 		this->materials[0],
 		this->textures[TEX_CONTAINER],
 		this->textures[TEX_CONTAINER_SPECULAR],
 		meshes
+	)
+	);*/
+
+
+	this->models.push_back(new Model(
+		glm::vec3(0.0f, 0.0f, -10.0f),
+		this->materials[0],
+		this->textures[0],
+		this->textures[1],
+		"OBJFiles/playerShip2.obj"
 	)
 	);
 
