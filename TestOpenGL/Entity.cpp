@@ -2,17 +2,17 @@
 
 void Entity::setPosition(glm::vec3 pos)
 {
-	m_position = pos;
+	m_model->SetPosition(pos);
 }
 
 void Entity::setSize(glm::vec3 size)
 {
-	m_size = size;
+m_model->SetSize(size);
 }
 
 void Entity::setRotation(glm::vec3 rotation)
 {
-	m_rotation = rotation;
+	m_model->Setrotate(rotation);
 }
 
 void Entity::setvelocity(glm::vec3 velocity)
@@ -32,17 +32,17 @@ void Entity::setDestroyed(bool isdestroyed)
 
 glm::vec3 Entity::getPosition()
 {
-	return m_position;
+	return m_model->GetPosition();
 }
 
 glm::vec3 Entity::getSize()
 {
-	return m_size;
+	return m_model->GetSize();
 }
 
 glm::vec3 Entity::getRotation()
 {
-	return m_rotation;
+	return m_model->GetRotation();
 }
 
 glm::vec3 Entity::getVelocity()

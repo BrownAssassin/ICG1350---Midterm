@@ -111,6 +111,21 @@ void Mesh::setScale(const glm::vec3 scale)
 	this->scale = scale;
 }
 
+glm::vec3 Mesh::GetPosition()
+{
+	return this->position;
+}
+
+glm::vec3 Mesh::GetRotation()
+{
+	return this->rotation;
+}
+
+glm::vec3 Mesh::GetScale()
+{
+	return this->scale;
+}
+
 void Mesh::move(const glm::vec3 position)
 {
 	this->position += position;

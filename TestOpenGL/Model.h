@@ -19,7 +19,14 @@ public:
 	~Model();
 
 	//Functions
-	void rotate(const glm::vec3 rotation);
+	void SetPosition(const glm::vec3 position);
+	void SetSize(const glm::vec3 size);
+
+	glm::vec3  GetPosition();
+	glm::vec3  GetSize();
+	glm::vec3 GetRotation();
+
+	void Setrotate(const glm::vec3 rotation);
 
 	void render(Shader* shader);
 
@@ -27,7 +34,7 @@ private:
 	Material* material;
 	Texture* overrideTextureDiffuse;
 	Texture* overrideTextureSpecular;
-	std::vector<Mesh*> meshes;
+	Mesh* meshes;
 
 	glm::vec3 position;
 
