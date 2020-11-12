@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "gtx/matrix_decompose.hpp"
 
 //Constructors/destructors
 Game::Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, const int GL_VERSION_MAJOR, const int GL_VERSION_MINOR, bool resizable)
@@ -128,24 +129,30 @@ void Game::updateKeyboardInput()
 	//Camera
 	if (glfwGetKey(this->window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		player->setPosition(glm::vec3(player->getPosition().x, player->getPosition().y, player->getPosition().z - 0.5f));
+		//player->setPosition(glm::vec3(player->getPosition().x, player->getPosition().y, player->getPosition().z - 0.5f));
+		player->getModel()->getMesh()->setModelMatrix(glm::translate(player->getModel()->getMesh()->GetModelMatrix(), glm::vec3(0.0f, 0.0f, -10.0f * dt)));
 		//this->camera.move(this->dt, FORWARD);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		player->setPosition(glm::vec3(player->getPosition().x, player->getPosition().y, player->getPosition().z + 0.5f));
+		//player->setPosition(glm::vec3(player->getPosition().x, player->getPosition().y, player->getPosition().z + 0.5f));
+		player->getModel()->getMesh()->setModelMatrix(glm::translate(player->getModel()->getMesh()->GetModelMatrix(), glm::vec3(0.0f, 0.0f, 10.0f * dt)));
 		//this->camera.move(this->dt, BACKWARD);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-
-		player->setRotation(glm::vec3(player->getRotation().x, player->getRotation().y + 2.0f, player->getRotation().z));
+		//player->setPosition(glm::vec3(player->getPosition().x - 0.5f, player->getPosition().y, player->getPosition().z));
+		//player->setRotation(glm::vec3(player->getRotation().x, player->getRotation().y + 2.0f, player->getRotation().z));
+		player->getModel()->getMesh()->setModelMatrix(glm::rotate(player->getModel()->getMesh()->GetModelMatrix(), glm::radians(2.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 		
-		//this->camera.move(this->dt, LEFT);
+		///this->camera.move(this->dt, LEFT);
+		
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		player->setRotation(glm::vec3(player->getRotation().x, player->getRotation().y - 2.0f, player->getRotation().z));
+		player->getModel()->getMesh()->setModelMatrix(glm::rotate(player->getModel()->getMesh()->GetModelMatrix(), glm::radians(-2.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+		//player->setPosition(glm::vec3(player->getPosition().x + 0.5f, player->getPosition().y, player->getPosition().z));
+		//player->setRotation(glm::vec3(player->getRotation().x, player->getRotation().y - 2.0f, player->getRotation().z));
 		//this->camera.move(this->dt, RIGHT);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_C) == GLFW_PRESS)
@@ -154,8 +161,12 @@ void Game::updateKeyboardInput()
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		this->camPosition.y += 0.05f;
+		
+		//this->camPosition.y += 0.05f;
 	}
+	std::cout << "PLAYER X:  " << player->getModel()->getMesh()->GetPosition().x << std::endl;
+	std::cout << "PLAYER Y:  " << player->getModel()->getMesh()->GetPosition().y << std::endl;
+	std::cout << "PLAYER Z:  " << player->getModel()->getMesh()->GetPosition().z << std::endl;
 }
 
 void Game::updateGamepadInput()
@@ -225,7 +236,7 @@ void Game::updateSkybox()
 	//Draw Skybox
 	glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
 	this->shaders[SHADER_SKYBOX_PROGRAM]->use();
-	ViewMatrix = glm::mat4(glm::mat3(camera.getViewMatrix()));	// Remove any translation component of the view matrix
+	ViewMatrix = glm::mat4(glm::mat3(camera. getViewMatrix()));	// Remove any translation component of the view matrix
 	glUniformMatrix4fv(glGetUniformLocation(this->shaders[SHADER_SKYBOX_PROGRAM]->id, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(this->shaders[SHADER_SKYBOX_PROGRAM]->id, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
 	//skybox cube
@@ -246,8 +257,12 @@ void Game::update()
 	//UPDATE INPUT ---
 	this->updateDt();
 	this->updateInput();
-	this->camera.setPosition(glm::vec3(entities[0]->getPosition().x, entities[0]->getPosition().y + 15, entities[0]->getPosition().z + 25));
 
+
+	//Update cam position
+	this->camera.setPosition(glm::vec3(entities[0]->getPosition().x, entities[0]->getPosition().y + 15, entities[0]->getPosition().z + 25));
+	//this->camera.setPosition(glm::vec3(entities[0]->getPosition().x, entities[0]->getPosition().y + 15, entities[0]->getPosition().z + 25));
+	//this->camera.setCamLookAt(entities[0]->getPosition());
 	//this->models[0]->rotate(glm::vec3(0.0f, 2.0f, 0.0f));
 	//this->models[1]->rotate(glm::vec3(0.0f, 1.0f, 0.0f));
 	//this->models[2]->rotate(glm::vec3(0.0f, 1.0f, 0.0f));
@@ -415,8 +430,6 @@ void Game::initMaterials()
 
 void Game::initModels()
 {
-
-
 	Model* temp = new Model(
 		glm::vec3(0.0f, 0.0f, -10.0f),
 		this->materials[0],
@@ -428,13 +441,13 @@ void Game::initModels()
 	entities.push_back(new Entity(temp, 0));
 
 	temp = new Model(
-		glm::vec3(10.0f, 10.0f, 10.0f),
+		glm::vec3(0.0f, 0.0f, -500.0f),
 		this->materials[0],
 		this->textures[0],
 		this->textures[1],
-		"OBJFiles/monkey.obj"
+		"OBJFiles/planet1.obj"
 	);
-
+	temp->SetSize(glm::vec3(8.0f, 8.0f, 8.0f));
 	entities.push_back(new Entity(temp, 0));
 
 	/*for (auto*& i : meshes)
@@ -457,6 +470,11 @@ void Game::initUniforms()
 
 void Game::initSkybox()
 {
+	for (size_t i = 0; i < 108; i++)
+	{
+		skyboxVertices[i] *= 10;
+	}
+	
 	// Setup skybox VAO
 	GLuint skyboxVBO;
 	glGenVertexArrays(1, &this->skyboxVAO);

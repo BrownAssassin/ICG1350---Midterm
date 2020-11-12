@@ -19,14 +19,14 @@ public:
 		GLuint* indexArray,
 		const unsigned& nrOfIndices,
 		glm::vec3 position = glm::vec3(0.0f),
-		glm::vec3 origin = glm::vec3(0.0f),
+		//glm::vec3 origin = glm::vec3(0.0f),
 		glm::vec3 rotation = glm::vec3(0.0f),
 		glm::vec3 scale = glm::vec3(1.0f));
 
 	Mesh(
 		Primitive* primitive,
 		glm::vec3 position = glm::vec3(0.0f),
-		glm::vec3 origin = glm::vec3(0.0f),
+		//glm::vec3 origin = glm::vec3(0.0f),
 		glm::vec3 rotation = glm::vec3(0.0f),
 		glm::vec3 scale = glm::vec3(1.0f));
 
@@ -37,17 +37,21 @@ public:
 	//Modifiers
 	void setPosition(const glm::vec3 position);
 
-	void setOrigin(const glm::vec3 origin);
+	//void setOrigin(const glm::vec3 origin);
 
 	void setRotation(const glm::vec3 rotation);
 
 	void setScale(const glm::vec3 scale);
+
+	void setModelMatrix(glm::mat4 modelMatrix);
 
 	glm::vec3 GetPosition();
 
 	glm::vec3 GetRotation();
 
 	glm::vec3 GetScale();
+
+	glm::mat4 GetModelMatrix();
 
 	void move(const glm::vec3 position);
 
@@ -71,7 +75,7 @@ private:
 	GLuint skyboxVBO;
 
 	glm::vec3 position;
-	glm::vec3 origin;
+	//glm::vec3 origin;
 	glm::vec3 rotation;
 	glm::vec3 scale;
 

@@ -1,9 +1,9 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices, glm::vec3 position, glm::vec3 origin, glm::vec3 rotation, glm::vec3 scale)
+Mesh::Mesh(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
 {
 	this->position = position;
-	this->origin = origin;
+	//this->origin = origin;
 	this->rotation = rotation;
 	this->scale = scale;
 
@@ -23,13 +23,14 @@ Mesh::Mesh(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray
 	}
 
 	this->initVAO();
+	this->ModelMatrix = glm::mat4(1.0f);
 	this->updateModelMatrix();
 }
 
-Mesh::Mesh(Primitive* primitive, glm::vec3 position, glm::vec3 origin, glm::vec3 rotation, glm::vec3 scale)
+Mesh::Mesh(Primitive* primitive, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
 {
 	this->position = position;
-	this->origin = origin;
+	//this->origin = origin;
 	this->rotation = rotation;
 	this->scale = scale;
 
@@ -49,13 +50,14 @@ Mesh::Mesh(Primitive* primitive, glm::vec3 position, glm::vec3 origin, glm::vec3
 	}
 
 	this->initVAO();
+	this->ModelMatrix = glm::mat4(1.0f);
 	this->updateModelMatrix();
 }
 
 Mesh::Mesh(const Mesh& obj)
 {
 	this->position = obj.position;
-	this->origin = obj.origin;
+	//this->origin = obj.origin;
 	this->rotation = obj.rotation;
 	this->scale = obj.scale;
 
@@ -96,10 +98,10 @@ void Mesh::setPosition(const glm::vec3 position)
 	this->position = position;
 }
 
-void Mesh::setOrigin(const glm::vec3 origin)
-{
-	this->origin = origin;
-}
+//void Mesh::setOrigin(const glm::vec3 origin)
+//{
+//	this->origin = origin;
+//}
 
 void Mesh::setRotation(const glm::vec3 rotation)
 {
@@ -109,6 +111,11 @@ void Mesh::setRotation(const glm::vec3 rotation)
 void Mesh::setScale(const glm::vec3 scale)
 {
 	this->scale = scale;
+}
+
+void Mesh::setModelMatrix(glm::mat4 modelMatrix)
+{
+	this->ModelMatrix = modelMatrix;
 }
 
 glm::vec3 Mesh::GetPosition()
@@ -124,6 +131,11 @@ glm::vec3 Mesh::GetRotation()
 glm::vec3 Mesh::GetScale()
 {
 	return this->scale;
+}
+
+glm::mat4 Mesh::GetModelMatrix()
+{
+	return this->ModelMatrix;
 }
 
 void Mesh::move(const glm::vec3 position)
@@ -209,11 +221,11 @@ void Mesh::updateUniforms(Shader* shader)
 
 void Mesh::updateModelMatrix()
 {
-	this->ModelMatrix = glm::mat4(1.0f);
-	this->ModelMatrix = glm::translate(this->ModelMatrix, this->origin);
-	this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-	this->ModelMatrix = glm::translate(this->ModelMatrix, this->position - this->origin);
-	this->ModelMatrix = glm::scale(this->ModelMatrix, this->scale);
+	this->position = glm::vec3(this->ModelMatrix[3]);
+	//this->ModelMatrix = glm::translate(this->ModelMatrix, this->position);
+	//this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	//this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	//this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	////this->ModelMatrix = glm::translate(this->ModelMatrix, this->position - this->origin);
+	//this->ModelMatrix = glm::scale(this->ModelMatrix, this->scale);
 }

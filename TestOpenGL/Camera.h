@@ -21,6 +21,8 @@ public:
 
 	const glm::mat4 getViewMatrix();
 
+	void setCamLookAt(glm::vec3 camTarget);
+
 	const glm::vec3 getPosition() const;
 	void setPosition(glm::vec3 pos);
 

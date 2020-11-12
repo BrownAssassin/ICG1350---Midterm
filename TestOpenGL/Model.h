@@ -26,6 +26,8 @@ public:
 	glm::vec3  GetSize();
 	glm::vec3 GetRotation();
 
+	Mesh* getMesh();
+
 	void Setrotate(const glm::vec3 rotation);
 
 	void render(Shader* shader);
@@ -34,7 +36,7 @@ private:
 	Material* material;
 	Texture* overrideTextureDiffuse;
 	Texture* overrideTextureSpecular;
-	Mesh* meshes;
+	Mesh* mesh;
 
 	glm::vec3 position;
 
