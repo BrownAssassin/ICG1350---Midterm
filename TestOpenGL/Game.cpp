@@ -4,6 +4,7 @@
 Game::Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, const int GL_VERSION_MAJOR, const int GL_VERSION_MINOR, bool resizable)
 	: WINDOW_WIDTH(WINDOW_WIDTH), WINDOW_HEIGHT(WINDOW_HEIGHT), GL_VERSION_MAJOR(GL_VERSION_MAJOR), GL_VERSION_MINOR(GL_VERSION_MINOR), camera(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f))
 {
+
 	//Init variables
 	this->window = nullptr;
 	this->framebufferWidth = this->WINDOW_WIDTH;
@@ -115,6 +116,9 @@ void Game::updateMouseInput()
 
 void Game::updateKeyboardInput()
 {
+	auto player = this->entities[0];
+	
+
 	//Program
 	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
@@ -124,19 +128,25 @@ void Game::updateKeyboardInput()
 	//Camera
 	if (glfwGetKey(this->window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		this->camera.move(this->dt, FORWARD);
+		player->setPosition(glm::vec3(player->getPosition().x, player->getPosition().y, player->getPosition().z - 0.5f));
+		//this->camera.move(this->dt, FORWARD);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		this->camera.move(this->dt, BACKWARD);
+		player->setPosition(glm::vec3(player->getPosition().x, player->getPosition().y, player->getPosition().z + 0.5f));
+		//this->camera.move(this->dt, BACKWARD);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		this->camera.move(this->dt, LEFT);
+
+		player->setRotation(glm::vec3(player->getRotation().x, player->getRotation().y + 2.0f, player->getRotation().z));
+		
+		//this->camera.move(this->dt, LEFT);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		this->camera.move(this->dt, RIGHT);
+		player->setRotation(glm::vec3(player->getRotation().x, player->getRotation().y - 2.0f, player->getRotation().z));
+		//this->camera.move(this->dt, RIGHT);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_C) == GLFW_PRESS)
 	{
@@ -207,7 +217,7 @@ void Game::updateInput()
 	this->updateKeyboardInput();
 	this->updateMouseInput();
 	this->updateGamepadInput();
-	this->camera.updateInput(dt, -1, this->mouseOffsetX, this->mouseOffsetY);
+	//this->camera.updateInput(dt, -1, this->mouseOffsetX, this->mouseOffsetY * 0);
 }
 
 void Game::updateSkybox()
@@ -236,6 +246,7 @@ void Game::update()
 	//UPDATE INPUT ---
 	this->updateDt();
 	this->updateInput();
+	this->camera.setPosition(glm::vec3(entities[0]->getPosition().x, entities[0]->getPosition().y + 15, entities[0]->getPosition().z + 25));
 
 	//this->models[0]->rotate(glm::vec3(0.0f, 2.0f, 0.0f));
 	//this->models[1]->rotate(glm::vec3(0.0f, 1.0f, 0.0f));
@@ -266,7 +277,6 @@ void Game::render()
 
 	for(auto& i : this->entities)
 		i->getModel()->render(this->shaders[SHADER_CORE_PROGRAM]);
-
 
 
 	glBindVertexArray(0);
@@ -405,61 +415,7 @@ void Game::initMaterials()
 
 void Game::initModels()
 {
-	std::vector<Mesh*>meshes;
 
-	int width = 5;
-	int height = 2;
-	int horDist = 1;
-	int verDist = 1;
-
-	meshes.push_back(new Mesh(&Brick(width, height), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-	//meshes.push_back(new Mesh(&Cube(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
-
-	/*this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));*/
-
-	//initBricks(5, 5, 10, 5, 1, 1);
-
-	/*this->models.push_back(new Model(
-		glm::vec3(-10.0f, 2.0f, 4.0f),
-		this->materials[0],
-		this->textures[0],
-		this->textures[1],
-		"OBJFiles/playerShip.obj"
-	)
-	);*/
-
-	/*for (size_t y = 0; y < 5; y++)
-		for (size_t x = 0; x < 5; x++)
-		{
-			this->models.push_back(new Model(
-				glm::vec3(x * (width + horDist), y * (height + verDist), -1.0f),
-				this->materials[0],
-				this->textures[TEX_CONTAINER],
-				this->textures[TEX_CONTAINER_SPECULAR],
-				meshes
-			)
-			);
-		}*/
-
-		//cube 1
-	/*this->models.push_back(new Model(
-		glm::vec3(0.0f, 0.0f, -1.0f),
-		this->materials[0],
-		this->textures[TEX_CONTAINER],
-		this->textures[TEX_CONTAINER_SPECULAR],
-		meshes
-	)
-	);*/
-
-
-	/*this->models.push_back(new Model(
-		glm::vec3(0.0f, 0.0f, -10.0f),
-		this->materials[0],
-		this->textures[0],
-		this->textures[1],
-		"OBJFiles/playerShip2.obj"
-	)
-	);*/
 
 	Model* temp = new Model(
 		glm::vec3(0.0f, 0.0f, -10.0f),
@@ -472,7 +428,7 @@ void Game::initModels()
 	entities.push_back(new Entity(temp, 0));
 
 	temp = new Model(
-		glm::vec3(0.0f, 0.0f, 10.0f),
+		glm::vec3(10.0f, 10.0f, 10.0f),
 		this->materials[0],
 		this->textures[0],
 		this->textures[1],
@@ -481,37 +437,8 @@ void Game::initModels()
 
 	entities.push_back(new Entity(temp, 0));
 
-	/*
-	this->models.push_back(new Model(
-		glm::vec3(0.0f, 2.0f, -1.0f),
-		this->materials[0],
-		this->textures[0],
-		this->textures[1],
-		meshes
-	)
-	);
-
-	this->models.push_back(new Model(
-		glm::vec3(4.0f, 2.0f, 4.0f),
-		this->materials[0],
-		this->textures[0],
-		this->textures[1],
-		"OBJFiles/monkey.obj"
-	)
-	);
-
-	*/
-	/*this->models.push_back(new Model(
-		glm::vec3(2.0f, 0.0f, 2.0f),
-		this->materials[0],
-		this->textures[TEX_CONTAINER],
-		this->textures[TEX_CONTAINER_SPECULAR],
-		meshes
-		)
-	);*/
-
-	for (auto*& i : meshes)
-		delete i;
+	/*for (auto*& i : meshes)
+		delete i;*/
 }
 
 void Game::initLights()

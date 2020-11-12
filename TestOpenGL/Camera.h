@@ -22,6 +22,8 @@ public:
 	const glm::mat4 getViewMatrix();
 
 	const glm::vec3 getPosition() const;
+	void setPosition(glm::vec3 pos);
+
 
 	void move(const float& dt, const int direction);
 

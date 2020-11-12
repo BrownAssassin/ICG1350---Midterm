@@ -4,6 +4,8 @@
 #include "Mesh.h"
 #include "Model.h"
 
+enum playerDir { P_FORWARD = 0, P_BACKWARD, P_LEFT, P_RIGHT };
+
 class Entity
 {
 public:
@@ -12,7 +14,9 @@ public:
 		m_ID(id),
 		m_isDestroyed(isdes),
 		m_velocity(vel)
+
 	{
+		
 	}
 
 	~Entity()
@@ -46,6 +50,9 @@ public:
 
 	int getID();
 	bool getIsDestroyed();
+
+
+	//void move(const float& dt, const int direction);
 	
 private:
 	glm::vec3 m_velocity;
@@ -56,4 +63,47 @@ private:
 	unsigned int m_ID; 
 	bool m_isDestroyed;
 	GLuint VAO;
+
+
+	//Mouse Input
+	GLfloat movementSpeed;
+
 };
+
+//class Player : Entity
+//{
+//public:
+//	Player(Model* model, unsigned int id, glm::vec3 vel = glm::vec3(0), bool isdes = false)
+//		: Entity(model, id, vel, isdes)
+//	{
+//		this->movementSpeed = 3.0f;
+//		this->sensitivity = 5.0f;
+//		this->worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+//		this->up = glm::vec3(0.0f, 1.0f, 0.0f);
+//		this->right = glm::vec3(0.0f);
+//
+//		this->pitch = 0.0f;
+//		this->yaw = -90.0f;
+//		this->roll = 0.0f;
+//	}
+//	
+//	Model* getModel();
+//	void move(const float& dt, const int direction);
+//	void updateMouseInput(const float& dt, const double& offsetX, const double& offsetY);
+//	void updateVectors();
+//
+//
+//private:
+//	//Mouse Input
+//	GLfloat movementSpeed;
+//	GLfloat sensitivity;
+//	glm::vec3 worldUp;
+//	
+//	glm::vec3 front;
+//	glm::vec3 right;
+//	glm::vec3 up;
+//	GLfloat pitch;
+//	GLfloat yaw;
+//	GLfloat roll;
+//
+//};

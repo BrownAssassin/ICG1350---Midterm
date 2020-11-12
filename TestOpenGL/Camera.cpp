@@ -33,6 +33,11 @@ const glm::vec3 Camera::getPosition() const
 	return this->position;
 }
 
+void Camera::setPosition(glm::vec3 pos)
+{
+	this->position = pos;
+}
+
 void Camera::move(const float& dt, const int direction)
 {
 	//Update position vector

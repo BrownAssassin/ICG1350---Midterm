@@ -64,3 +64,88 @@ bool Entity::getIsDestroyed()
 {
 	return m_isDestroyed;
 }
+
+//void Entity::move(const float& dt, const int direction)
+//{
+//	//Update position vector
+//	switch (direction)
+//	{
+//	case P_FORWARD:
+//		this->setPosition(getPosition() += this->front * this->movementSpeed * dt);
+//		std::cout << "forward\n";
+//		break;
+//	case P_BACKWARD:
+//		this->setPosition(getPosition() -= this->front * this->movementSpeed * dt);
+//
+//		break;
+//	case P_LEFT:
+//		this->setPosition(getPosition() -= this->right * this->movementSpeed * dt);
+//
+//		break;
+//	case P_RIGHT:
+//		this->setPosition(getPosition() += this->right * this->movementSpeed * dt);
+//
+//		break;
+//	default:
+//		break;
+//	}
+//}
+
+
+//Model* Player::getModel()
+//{
+//	return Entity::getModel();
+//}
+//
+//void Player::move(const float& dt, const int direction)
+//{
+//	//Update position vector
+//	switch (direction)
+//	{
+//	case P_FORWARD:
+//		this->setPosition(getPosition() += this->front * this->movementSpeed * dt);
+//
+//		break;
+//	case P_BACKWARD:
+//		this->setPosition(getPosition() -= this->front * this->movementSpeed * dt);
+//
+//		break;
+//	case P_LEFT:
+//		this->setPosition(getPosition() -= this->right * this->movementSpeed * dt);
+//
+//		break;
+//	case P_RIGHT:
+//		this->setPosition(getPosition() += this->right * this->movementSpeed * dt);
+//
+//		break;
+//	default:
+//		break;
+//	}
+//}
+//
+//void Player::updateMouseInput(const float& dt, const double& offsetX, const double& offsetY)
+//{
+//	//Update pitch, yaw and roll
+//	this->pitch += static_cast<GLfloat>(offsetY) * this->sensitivity * dt;
+//	this->yaw += static_cast<GLfloat>(offsetX) * this->sensitivity * dt;
+//
+//
+//	if (this->pitch > 80.0f)
+//		this->pitch = 80.0f;
+//	else if (this->pitch < -80.0f)
+//		this->pitch = -80.0f;
+//
+//	if (this->yaw > 360.f || this->yaw < -360.f)
+//		this->yaw = 0;
+//}
+//
+//void Player::updateVectors()
+//{
+//	this->front.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+//	this->front.y = sin(glm::radians(this->pitch));
+//	this->front.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+//
+//	this->front = glm::normalize(this->front);
+//	this->right = glm::normalize(glm::cross(this->front, this->worldUp));
+//	this->up = glm::normalize(glm::cross(this->right, this->front));
+//}
