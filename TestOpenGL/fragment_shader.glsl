@@ -18,7 +18,10 @@ out vec4 fs_color;
 
 //Uniforms
 uniform Material material;
-uniform vec3 lightPos0;
+
+uniform int activelights;
+
+uniform vec3 lightPos[6];
 uniform vec3 cameraPos;
 
 //Functions
@@ -27,9 +30,9 @@ vec3 calculateAmbient(Material material)
 	return material.ambient;
 }
 
-vec3 calculateDiffuse(Material material, vec3 vs_position, vec3 vs_normal, vec3 lightPos0)
+vec3 calculateDiffuse(Material material, vec3 vs_position, vec3 vs_normal, vec3 lightPosCur)
 {
-	vec3 posToLightDirVec = normalize(lightPos0 - vs_position);
+	vec3 posToLightDirVec = normalize(lightPosCur - vs_position);
 	vec3 diffuseColor = vec3(1.0f, 1.0f, 1.0f);
 	float diffuse = clamp(dot(posToLightDirVec, vs_normal), 0, 1);
 	vec3 diffuseFinal = material.diffuse * diffuse;
@@ -37,9 +40,9 @@ vec3 calculateDiffuse(Material material, vec3 vs_position, vec3 vs_normal, vec3 
 	return diffuseFinal;
 }
 
-vec3 calculateSpecular(Material material, vec3 vs_position, vec3 vs_normal, vec3 lightPos0, vec3 cameraPos)
+vec3 calculateSpecular(Material material, vec3 vs_position, vec3 vs_normal, vec3 lightPosCur, vec3 cameraPos)
 {
-	vec3 lightToPosDirVec = normalize(vs_position - lightPos0);
+	vec3 lightToPosDirVec = normalize(vs_position - lightPosCur);
 	vec3 reflectDirVec = normalize(reflect(lightToPosDirVec, normalize(vs_normal)));
 	vec3 posToViewDirVec = normalize(cameraPos - vs_position);
 	float specularConstant = pow(max(dot(posToViewDirVec, reflectDirVec), 0), 50);
@@ -57,13 +60,15 @@ void main()
 	vec3 ambientFinal = calculateAmbient(material);
 
 	//Diffuse light
-	vec3 diffuseFinal = calculateDiffuse(material, vs_position, vs_normal, lightPos0);
+	vec3 diffuseFinal = vec3(0,0,0);
+	vec3 specularFinal = vec3(0,0,0);
 
+	for(int i = 0; i < activelights ; i++){
+	diffuseFinal += calculateDiffuse(material, vs_position, vs_normal, lightPos[i]);
+	
 	//Specular light
-	vec3 specularFinal = calculateSpecular(material, vs_position, vs_normal, lightPos0, cameraPos);
-
-	//Attenuation
-
+	 specularFinal+=calculateSpecular(material, vs_position, vs_normal, lightPos[i], cameraPos);
+}
 	//Final light
 	fs_color = 
 	texture(material.diffuseTex, vs_texcoord) /* * vec4(vs_color, 1.f)*/ 

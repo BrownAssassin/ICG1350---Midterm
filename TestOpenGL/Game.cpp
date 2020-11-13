@@ -119,6 +119,7 @@ void Game::updateKeyboardInput()
 {
 	auto player = this->entities[0];
 	
+	glm::vec3 finalmovement = glm::vec3(0, 0, 0);
 
 	//Program
 	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -129,41 +130,46 @@ void Game::updateKeyboardInput()
 	//Camera
 	if (glfwGetKey(this->window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		//player->setPosition(glm::vec3(player->getPosition().x, player->getPosition().y, player->getPosition().z - 0.5f));
-		player->getModel()->getMesh()->setModelMatrix(glm::translate(player->getModel()->getMesh()->GetModelMatrix(), glm::vec3(0.0f, 0.0f, -10.0f * dt)));
+	finalmovement = glm::vec3(0, 0, - 0.5f );
+		//player->getModel()->getMesh()->setModelMatrix(glm::translate(player->getModel()->getMesh()->GetModelMatrix(), glm::vec3(0.0f, 0.0f, -10.0f * dt)));
 		//this->camera.move(this->dt, FORWARD);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		//player->setPosition(glm::vec3(player->getPosition().x, player->getPosition().y, player->getPosition().z + 0.5f));
-		player->getModel()->getMesh()->setModelMatrix(glm::translate(player->getModel()->getMesh()->GetModelMatrix(), glm::vec3(0.0f, 0.0f, 10.0f * dt)));
+		finalmovement = glm::vec3(0, 0, 0.5f);
+		//player->getModel()->getMesh()->setModelMatrix(glm::translate(player->getModel()->getMesh()->GetModelMatrix(), glm::vec3(0.0f, 0.0f, 10.0f * dt)));
 		//this->camera.move(this->dt, BACKWARD);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		//player->setPosition(glm::vec3(player->getPosition().x - 0.5f, player->getPosition().y, player->getPosition().z));
-		//player->setRotation(glm::vec3(player->getRotation().x, player->getRotation().y + 2.0f, player->getRotation().z));
-		player->getModel()->getMesh()->setModelMatrix(glm::rotate(player->getModel()->getMesh()->GetModelMatrix(), glm::radians(2.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+		player->setRotation(glm::vec3(player->getRotation().x, player->getRotation().y + 2.0f, player->getRotation().z));
+		//player->getModel()->getMesh()->setModelMatrix(glm::rotate(player->getModel()->getMesh()->GetModelMatrix(), glm::radians(2.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 		
 		///this->camera.move(this->dt, LEFT);
 		
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		player->getModel()->getMesh()->setModelMatrix(glm::rotate(player->getModel()->getMesh()->GetModelMatrix(), glm::radians(-2.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+	//	player->getModel()->getMesh()->setModelMatrix(glm::rotate(player->getModel()->getMesh()->GetModelMatrix(), glm::radians(-2.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 		//player->setPosition(glm::vec3(player->getPosition().x + 0.5f, player->getPosition().y, player->getPosition().z));
-		//player->setRotation(glm::vec3(player->getRotation().x, player->getRotation().y - 2.0f, player->getRotation().z));
+		player->setRotation(glm::vec3(player->getRotation().x, player->getRotation().y - 2.0f, player->getRotation().z));
 		//this->camera.move(this->dt, RIGHT);
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_C) == GLFW_PRESS)
 	{
 		this->camPosition.y -= 0.05f;
 	}
-	if (glfwGetKey(this->window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	{
-		
-		//this->camPosition.y += 0.05f;
-	}
+	
+	player->getModel()->getMesh()->updateModelMatrix();
+
+	glm::mat3 playerRotation = player->getModel()->getMesh()->GetModelMatrix();
+
+	glm::vec3 finalRotatedTransform = playerRotation * finalmovement;
+
+	player->setPosition(finalRotatedTransform + player->getPosition());
+
+
 	std::cout << "PLAYER X:  " << player->getModel()->getMesh()->GetPosition().x << std::endl;
 	std::cout << "PLAYER Y:  " << player->getModel()->getMesh()->GetPosition().y << std::endl;
 	std::cout << "PLAYER Z:  " << player->getModel()->getMesh()->GetPosition().z << std::endl;
@@ -259,14 +265,18 @@ void Game::update()
 	this->updateInput();
 
 
-	//Update cam position
-	this->camera.setPosition(glm::vec3(entities[0]->getPosition().x, entities[0]->getPosition().y + 15, entities[0]->getPosition().z + 25));
-	//this->camera.setPosition(glm::vec3(entities[0]->getPosition().x, entities[0]->getPosition().y + 15, entities[0]->getPosition().z + 25));
-	//this->camera.setCamLookAt(entities[0]->getPosition());
-	//this->models[0]->rotate(glm::vec3(0.0f, 2.0f, 0.0f));
-	//this->models[1]->rotate(glm::vec3(0.0f, 1.0f, 0.0f));
-	//this->models[2]->rotate(glm::vec3(0.0f, 1.0f, 0.0f));
-	/*std::cout << "DT: " << this->dt << "\n" << "Mouse offsetX: " << this->mouseOffsetX << " Mouse offsetY: " << this->mouseOffsetY << "\n";*/
+	glm::vec4 offset = glm::vec4(0, 15, 25, 1);
+
+	glm::mat4 playerRot = entities[0]->getModel()->getMesh()->GetModelMatrix();
+
+	glm::mat3 playerRotation = entities[0]->getModel()->getMesh()->GetModelMatrix();
+
+	glm::vec3 target = playerRotation * glm::vec3(0, 0, -1);
+
+	this->camera.setPosition(playerRot * offset);
+
+	this->camera.setCamLookAt(target + this->camera.getPosition());
+
 }
 
 void Game::render()
@@ -431,7 +441,7 @@ void Game::initMaterials()
 void Game::initModels()
 {
 	Model* temp = new Model(
-		glm::vec3(0.0f, 0.0f, -10.0f),
+		glm::vec3(-4.0f, 0.0f, 0.0f),
 		this->materials[0],
 		this->textures[0],
 		this->textures[1],
@@ -463,8 +473,9 @@ void Game::initUniforms()
 {
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(ViewMatrix, "ViewMatrix");
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(ProjectionMatrix, "ProjectionMatrix");
+	this->shaders[SHADER_CORE_PROGRAM]->set1i(lights.size(), "activelights");
 
-	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(*this->lights[0], "lightPos0");
+	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(*this->lights[0], "lightPos[0]");
 
 }
 

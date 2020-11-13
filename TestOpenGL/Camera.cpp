@@ -30,7 +30,9 @@ const glm::mat4 Camera::getViewMatrix()
 
 void Camera::setCamLookAt(glm::vec3 camTarget)
 {
-	this->ViewMatrix = glm::lookAt(this->position, camTarget, glm::vec3(0.0f, 1.0f, 0.0f));
+	this->front = glm::normalize(camTarget - this->position);
+
+	//this->ViewMatrix = glm::lookAt(this->position, camTarget, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 const glm::vec3 Camera::getPosition() const
@@ -92,11 +94,11 @@ void Camera::updateInput(const float& dt, const int direction, const double& off
 
 void Camera::updateCameraVectors()
 {
-	this->front.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+	/*this->front.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
 	this->front.y = sin(glm::radians(this->pitch));
 	this->front.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
 
-	this->front = glm::normalize(this->front);
+	this->front = glm::normalize(this->front);*/
 	this->right = glm::normalize(glm::cross(this->front, this->worldUp));
 	this->up = glm::normalize(glm::cross(this->right, this->front));
 }

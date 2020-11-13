@@ -221,7 +221,10 @@ void Mesh::updateUniforms(Shader* shader)
 
 void Mesh::updateModelMatrix()
 {
-	this->position = glm::vec3(this->ModelMatrix[3]);
+//this->position = glm::vec3(this->ModelMatrix[3]);
+	
+	this->ModelMatrix = glm::mat4(glm::translate(glm::mat4(1.0f), this->position) * glm::rotate(glm::mat4(1.0f), glm::radians(this->rotation.y),	glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), this->scale));
+
 	//this->ModelMatrix = glm::translate(this->ModelMatrix, this->position);
 	//this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 	//this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));

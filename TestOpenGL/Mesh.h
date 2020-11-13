@@ -61,6 +61,8 @@ public:
 
 	void render(Shader* shader);
 
+	void updateModelMatrix();
+
 private:
 	Vertex* vertexArray;
 	unsigned nrOfVertices;
@@ -85,5 +87,5 @@ private:
 
 	void updateUniforms(Shader* shader);
 
-	void updateModelMatrix();
+	
 };
