@@ -1,4 +1,4 @@
-# ICG1350-Midterm
+# ICG1350 - Midterm
 
 ---
 
